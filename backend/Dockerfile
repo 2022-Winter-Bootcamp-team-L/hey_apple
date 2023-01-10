@@ -1,8 +1,3 @@
-# FROM ubuntu:20.04
-
-# WORKDIR /the/workdir/path
-
-
 FROM python:3.10.0a3-alpine
 
 ENV PYTHONDONTWRITEBYTECODE 1

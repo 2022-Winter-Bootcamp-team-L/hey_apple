@@ -10,24 +10,28 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import pymysql
+pymysql.install_as_MySQLdb()
 import os
 from pathlib import Path
-pymysql.install_as_MySQLdb()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(t!&98&@d&f56)g-i5$n18=mza#gdp+w!l_t43jpk)h9ezc*x$'
+SECRET_KEY = os.getenv('SECRET_KEY', 'foo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.getenv('DEBUG', 1))
 
-ALLOWED_HOSTS = []
+if os.getenv('DJANGO_ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(' ')
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 
 # Application definition
@@ -57,7 +61,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(SETTINGS_PATH), 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,13 +82,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     "default": {
-        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.mysql'),
-        'NAME': os.environ.get('SQL_DATABASE', 'mysql-db'),
-        'USER': os.environ.get('SQL_USER', 'root'),
-        #'USER': os.environ.get('SQL_USER', 'localhost'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD', '1234'),
-        'HOST': os.environ.get('SQL_HOST', 'mysql'),
-        'PORT': os.environ.get('SQL_PORT', '3306'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mysql-db',
+        'USER': 'root',
+        'PASSWORD': '1234',
+        'HOST': 'db',
+        'PORT': '3306',
     }
 }
 
