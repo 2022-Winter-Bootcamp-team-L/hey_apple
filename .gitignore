@@ -298,4 +298,4 @@ poetry.toml
 
 # End of https://www.toptal.com/developers/gitignore/api/python,macos,django,redisp
 
-/backend/mysql
+backend/mysql-db/*
