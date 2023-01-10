@@ -1,0 +1,5 @@
+
+create table Fruit(id BIGINT NOT NULL auto_increment, name VARCHAR(20) NOT NULL , havest VARCHAR(20) NOT NULL , content varchar(512) NOT NULL , price INT NOT NULL, calorie INT NOT NULL , create_at DATETIME NOT NULL , upload_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id));
+create table Image (id BIGINT NOT NULL auto_increment, s3_image_url varchar(512) NOT NULL, created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id));
+create table OrderBill (id BIGINT Not null auto_increment, image_id BIGINT not null ,date_of_purchase DATETIME NOT NULL , created_at DATETIME NOT NULL ,updated_at DATETIME NOT NULL,is_deleted BOOLEAN NOT NULL, primary key(id) ,foreign key (image_id) references Image(id) );
+create table FruitOrderBill(id BIGINT Not null auto_increment, fruit_id BIGINT NOT NULL , orderbill_id BIGINT NOT NULL , count INT NOT NULL , created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id) ,foreign key (fruit_id) references Fruit(id),foreign key (orderbill_id) references OrderBill(id) );
