@@ -17,8 +17,8 @@ class Fruit(models.Model):
     content = models.CharField(max_length=512 , null=False)
     price = models.IntegerField(null=False)
     calorie = models.IntegerField(null=False)
-    create_at = models.DateTimeField(default=timezone.now ,null=False)
-    upload_at = models.DateTimeField(default=timezone.now ,null=False)
+    created_at = models.DateTimeField(default=timezone.now ,null=False)
+    updated_at= models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
 
         
@@ -26,8 +26,8 @@ class Image(models.Model):
     id = models.BigAutoField(primary_key=True)
     s3_image_url = models.CharField(max_length=512 ,null=False)
     s3_result_image_url = models.CharField(max_length=512, blank=True, null=True)
-    create_at = models.DateTimeField(default=timezone.now ,null=False)
-    upload_at = models.DateTimeField(default=timezone.now ,null=False)
+    created_at = models.DateTimeField(default=timezone.now ,null=False)
+    updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
 
 class Orderbill(models.Model):
@@ -35,8 +35,8 @@ class Orderbill(models.Model):
     image_id = models.ForeignKey("Image" , related_name="image" , on_delete=models.CASCADE, db_column="image_id")
     date_of_purchase = models.DateTimeField()
     total_price = models.BigIntegerField(blank=True, null=True)
-    create_at = models.DateTimeField(default=timezone.now ,null=False)
-    upload_at = models.DateTimeField(default=timezone.now ,null=False)
+    created_at = models.DateTimeField(default=timezone.now ,null=False)
+    updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
 
 class Fruitorderbill(models.Model):
@@ -44,6 +44,6 @@ class Fruitorderbill(models.Model):
     fruit_id = models.ForeignKey("Fruit" , related_name="fruit", on_delete=models.CASCADE ,db_column="fruit_id")
     Orderbill_id = models.ForeignKey("Orderbill" , related_name="orderbill", on_delete=models.CASCADE ,db_column="orderbill_id")
     count = models.IntegerField(null=True)
-    create_at = models.DateTimeField(default=timezone.now ,null=False)
-    upload_at = models.DateTimeField(default=timezone.now ,null=False)
+    created_at = models.DateTimeField(default=timezone.now ,null=False)
+    updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
