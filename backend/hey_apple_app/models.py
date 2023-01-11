@@ -21,8 +21,7 @@ class Fruit(models.Model):
     updated_at= models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
 
-        
-class Image(models.Model):
+class images(models.Model):
     id = models.BigAutoField(primary_key=True)
     s3_image_url = models.CharField(max_length=512 ,null=False)
     s3_result_image_url = models.CharField(max_length=512, blank=True, null=True)
@@ -47,3 +46,5 @@ class Fruitorderbill(models.Model):
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
+
+    

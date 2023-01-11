@@ -4,13 +4,13 @@ from PIL import Image, ImageOps #pillow 사용
 from uuid import uuid4 #uuid 생성
 import boto3 ,os
 from backend.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-from backend.settings import AWS_BUCKET_REGION, AWS_STORAGE_BUCKET_NAME
+from backend.settings import AWS_REGION, AWS_STORAGE_BUCKET_NAME
 
 def s3_connection():
     '''
     s3 bucket에 연결하는 함수 
     '''
-    s3 = boto3.client('s3',region_name = AWS_BUCKET_REGION, aws_access_key_id = AWS_ACCESS_KEY_ID, aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
+    s3 = boto3.client('s3',region_name = AWS_REGION, aws_access_key_id = AWS_ACCESS_KEY_ID, aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
     return s3
 
 def s3_put_object(s3, bucket, filepath, filename):
@@ -28,7 +28,7 @@ def s3_get_image_url(s3, filename : str):
     '''
     image url을 불러오는 함수 
     '''
-    return f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{filename}'
+    return f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}'
 
 def get_img_url(img):
     s3_client = boto3.client(
