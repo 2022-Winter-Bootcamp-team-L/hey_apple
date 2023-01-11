@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.db import models
 
 
-class Fruit(models.Model):
+class fruit(models.Model):
     id = models.BigAutoField(primary_key=True , null=False)
     name = models.CharField(max_length=20 , null=False)
     harvest = models.CharField(max_length=20 , null=False)
@@ -20,17 +20,23 @@ class Fruit(models.Model):
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at= models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
+    
+    class Meta:
+        db_table = 'fruit'
 
         
-class Image(models.Model):
+class image(models.Model):
     id = models.BigAutoField(primary_key=True)
     s3_image_url = models.CharField(max_length=512 ,null=False)
     s3_result_image_url = models.CharField(max_length=512, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
+    
+    class Meta:
+        db_table = 'image'
 
-class Orderbill(models.Model):
+class orderbill(models.Model):
     id = models.BigAutoField(primary_key=True)
     image_id = models.ForeignKey("Image" , related_name="image" , on_delete=models.CASCADE, db_column="image_id")
     date_of_purchase = models.DateTimeField()
@@ -38,8 +44,11 @@ class Orderbill(models.Model):
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
+    
+    class Meta:
+        db_table = 'orderbill'
 
-class Fruitorderbill(models.Model):
+class fruitorderbill(models.Model):
     id = models.BigAutoField(primary_key=True)
     fruit_id = models.ForeignKey("Fruit" , related_name="fruit", on_delete=models.CASCADE ,db_column="fruit_id")
     Orderbill_id = models.ForeignKey("Orderbill" , related_name="orderbill", on_delete=models.CASCADE ,db_column="orderbill_id")
@@ -47,3 +56,6 @@ class Fruitorderbill(models.Model):
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at = models.DateTimeField(default=timezone.now ,null=False)
     is_deleted = models.IntegerField(null=False , default=1)
+    
+    class Meta:
+        db_table = 'fruitorderbill'
