@@ -299,3 +299,5 @@ poetry.toml
 # End of https://www.toptal.com/developers/gitignore/api/python,macos,django,redisp
 
 backend/mysql-db/*
+secrets.json
+ai_image

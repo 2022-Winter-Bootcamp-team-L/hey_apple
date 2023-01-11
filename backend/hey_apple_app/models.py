@@ -24,7 +24,7 @@ class fruit(models.Model):
     class Meta:
         db_table = 'fruit'
 
-        
+
 class image(models.Model):
     id = models.BigAutoField(primary_key=True)
     s3_image_url = models.CharField(max_length=512 ,null=False)
@@ -55,7 +55,7 @@ class fruitorderbill(models.Model):
     count = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at = models.DateTimeField(default=timezone.now ,null=False)
-    is_deleted = models.IntegerField(null=False , default=1)
-    
+    is_deleted = models.IntegerField(null=False , default=1) 
     class Meta:
         db_table = 'fruitorderbill'
+
