@@ -4,6 +4,17 @@ djangorestframework==3.13.1
 asgiref==3.6.0
 sqlparse==0.4.3
 cryptography
+
+# celery 패키지
 django_celery_beat
 django_celery_results
 celery
+
+# swagger 패키지
+drf_yasg
+
+#이미지 업로드 관련 패키지
+boto3 #s3 버킷 연결용
+pillow #이미지
+
+

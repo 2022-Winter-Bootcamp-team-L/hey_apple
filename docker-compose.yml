@@ -25,8 +25,8 @@ services:
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
     command: >
       ash -c "python wait_for_mysql.py &&
-              python manage.py makemigrations &&
-              python manage.py migrate &&
+              python manage.py makemigrations hey_apple_app &&
+              python manage.py migrate hey_apple_app &&
               python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
