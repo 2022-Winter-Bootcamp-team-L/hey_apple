@@ -38,7 +38,7 @@ class image(models.Model):
 
 class orderbill(models.Model):
     id = models.BigAutoField(primary_key=True)
-    image_id = models.ForeignKey("Image" , related_name="image" , on_delete=models.CASCADE, db_column="image_id")
+    image_id = models.ForeignKey("image" , related_name="image" , on_delete=models.CASCADE, db_column="image_id")
     date_of_purchase = models.DateTimeField()
     total_price = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now ,null=False)
@@ -50,8 +50,8 @@ class orderbill(models.Model):
 
 class fruitorderbill(models.Model):
     id = models.BigAutoField(primary_key=True)
-    fruit_id = models.ForeignKey("Fruit" , related_name="fruit", on_delete=models.CASCADE ,db_column="fruit_id")
-    Orderbill_id = models.ForeignKey("Orderbill" , related_name="orderbill", on_delete=models.CASCADE ,db_column="orderbill_id")
+    fruit_id = models.ForeignKey("fruit" , related_name="fruit", on_delete=models.CASCADE ,db_column="fruit_id")
+    orderbill_id = models.ForeignKey("orderbill" , related_name="orderbill", on_delete=models.CASCADE ,db_column="orderbill_id")
     count = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now ,null=False)
     updated_at = models.DateTimeField(default=timezone.now ,null=False)
