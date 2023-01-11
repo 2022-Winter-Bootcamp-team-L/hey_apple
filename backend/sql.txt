@@ -1,5 +1,52 @@
+create table Fruit(id BIGINT NOT NULL auto_increment, name VARCHAR(20) NOT NULL , harvest VARCHAR(20) NOT NULL , content varchar(512) NOT NULL , price INT NOT NULL, calorie INT NOT NULL , create_at DATETIME NOT NULL , upload_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id));
+create table Image (id BIGINT NOT NULL auto_increment, s3_image_url varchar(512) NOT NULL,s3_result_image_url varchar(512), created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id));
+create table OrderBill (id BIGINT Not null auto_increment, image_id BIGINT not null ,date_of_purchase DATETIME NOT NULL ,total_price BIGINT, created_at DATETIME NOT NULL ,updated_at DATETIME NOT NULL,is_deleted BOOLEAN NOT NULL, primary key(id) ,foreign key (image_id) references Image(id) );
+create table FruitOrderBill(id BIGINT Not null auto_increment, fruit_id BIGINT NOT NULL , orderbill_id BIGINT NOT NULL,count INT NOT NULL , created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id) ,foreign key (fruit_id) references Fruit(id),foreign key (orderbill_id) references OrderBill(id) );
 
-create table Fruit(id BIGINT NOT NULL auto_increment, name VARCHAR(20) NOT NULL , havest VARCHAR(20) NOT NULL , content varchar(512) NOT NULL , price INT NOT NULL, calorie INT NOT NULL , create_at DATETIME NOT NULL , upload_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id));
-create table Image (id BIGINT NOT NULL auto_increment, s3_image_url varchar(512) NOT NULL, created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id));
-create table OrderBill (id BIGINT Not null auto_increment, image_id BIGINT not null ,date_of_purchase DATETIME NOT NULL , created_at DATETIME NOT NULL ,updated_at DATETIME NOT NULL,is_deleted BOOLEAN NOT NULL, primary key(id) ,foreign key (image_id) references Image(id) );
-create table FruitOrderBill(id BIGINT Not null auto_increment, fruit_id BIGINT NOT NULL , orderbill_id BIGINT NOT NULL , count INT NOT NULL , created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL , is_deleted BOOLEAN NOT NULL , primary key(id) ,foreign key (fruit_id) references Fruit(id),foreign key (orderbill_id) references OrderBill(id) );
+예제 코드
+
+insert into Fruit(name , harvest , content , price ,calorie ,create_at,upload_at,is_deleted) values ("사과","10","사과는 맛있어",5000,300,"2022-11-01","2022-11-01",1);
+
+insert into Fruit(name , harvest , content , price ,calorie ,create_at,upload_at,is_deleted) values ("바나나","5","바나나는 맛있어",3000,400,"2022-12-31","2022-11-01",1);
+
+insert into Fruit(name , harvest , content , price ,calorie ,create_at,upload_at,is_deleted) values ("배","11","배는 맛있어",2400,200,"2022-10-07","2022-11-01",1);
+
+insert into Fruit(name , harvest , content , price ,calorie ,create_at,upload_at,is_deleted) values ("나오면안됨","11","배는 맛있어",2400,200,"2022-10-07","2022-11-01",0);
+
+imgae
+
+insert into Image(s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values("testurl","testresURL","2022-11-11","2022-11-11",1);
+
+insert into Image(s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values("testurl2","testresURL2","2022-01-07","2022-01-07",1);
+
+insert into Image(s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values("testurl3","testresURL3","2022-11-11","2022-11-11",1);
+
+insert into Image(s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values("나오면안됨",”testresURL3","2022-11-11","2022-11-11",1);
+
+OrderBill
+
+insert into OrderBill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(1,"2022-11-10",30000,"2022-11-10","2022-11-10",1);
+
+insert into OrderBill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(2,"2022-11-11",28000,"2022-11-11","2022-11-11",1);
+
+insert into OrderBill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(3,"2022-11-12",25000,"2022-11-12","2022-11-12",1);
+
+insert into OrderBill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(4,"2022-11-13",36000,"2022-11-13","2022-11-13",0);
+
+FruitOrderBill
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(1,1,3,"2022-11-10","2022-11-10",1);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(2,1,4,"2022-11-10","2022-11-10",1);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(1,2,2,"2022-11-11","2022-11-11",1);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(3,2,6,"2022-11-11","2022-11-11",1);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(2,3,4,"2022-11-12","2022-11-12",1);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(3,3,1,"2022-11-12","2022-11-12",1);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(1,1,3,"2022-11-13","2022-11-13",0);
+
+insert into FruitOrderBill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(2,1,4,"2022-11-13","2022-11-13",0);
