@@ -14,8 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include ,path
+from rest_framework import routers
+from hey_apple_app import views
+
+router = routers.DefaultRouter()
+# schema_url_patterns = [ ?? 이거 뭔지 잘 모르겠음
+#     path('api/v1/', include('hey_apple_app.urls')),
+#     # path('api/v1/images/', include('images.urls')),
+# ]
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api/v1/', include('hey_apple_app.urls'), name='fruits')
 ]
+
+
+
+
