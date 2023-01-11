@@ -11,14 +11,14 @@ from drf_yasg.utils import swagger_auto_schema  # swagger 적용
 # from backend.custom_exceptions import * #커스텀 오류 관리용
 from rest_framework import exceptions  # 오류 관리용
 
-from hey_apple_app.models import Fruit
+from hey_apple_app.models import fruit
 from hey_apple_app.serializers import FruitSerializer
 
 
 # Create your views here.
 
 @api_view(['GET'])
-def get_fruit(request, name):
-    data = Fruit.objects.get(name=name)
+def get_fruit(request, id):
+    data = fruit.objects.get(id=id)
     serializer = FruitSerializer(data)
     return Response(serializer.data)
