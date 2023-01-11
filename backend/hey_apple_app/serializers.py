@@ -1,22 +1,22 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Fruit,Image,Orderbill,Fruitorderbill
+from .models import fruit,image,orderbill,fruitorderbill
 
 class FruitSerializer(ModelSerializer):
     class Meta:
-        model = Fruit
+        model = fruit
         fields = '__all__'
         
 class ImageSerializer(ModelSerializer):
     class Meta:
-        model = Image
+        model = image
         fields = '__all__'
 
 class OrderbillSerializer(ModelSerializer):
     class Meta:
-        model = Orderbill
+        model = orderbill
         fields = '__all__'
         
 class FruitorderbillSerializer(ModelSerializer):
     class Meta:
-        model = Fruitorderbill
+        model = fruitorderbill
         fields = '__all__'
