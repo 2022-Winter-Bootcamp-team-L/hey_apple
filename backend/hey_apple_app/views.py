@@ -22,8 +22,6 @@ from .serializers import FruitSerializer
 
 
 
-# Create your views here.
-
 @api_view(['GET'])
 def get_fruit(request, id):
     data = fruit.objects.get(id=id)
