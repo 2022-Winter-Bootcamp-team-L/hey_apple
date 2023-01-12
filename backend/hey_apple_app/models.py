@@ -26,7 +26,7 @@ class fruit(models.Model):
 
 
 class image(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id = models.UUIDField(primary_key=True)
     s3_image_url = models.CharField(max_length=512 ,null=False)
     s3_result_image_url = models.CharField(max_length=512, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now ,null=False)

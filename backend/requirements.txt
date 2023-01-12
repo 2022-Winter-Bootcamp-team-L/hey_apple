@@ -19,3 +19,6 @@ boto3 #s3 버킷 연결용
 pillow #이미지
 
 
+
+#mongodb
+pymongo #db driver
