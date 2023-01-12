@@ -18,7 +18,6 @@ drf_yasg
 boto3 #s3 버킷 연결용
 pillow #이미지
 
-
-
-#mongodb
+#crawling
 pymongo #db driver
+selenium #크롤링 라이브러리
