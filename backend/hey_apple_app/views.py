@@ -21,8 +21,11 @@ from .utils import *
 from .serializers import FruitSerializer
 
 # mail API
+import logging
+import sys
 import smtplib
 import pymysql
+from .error_check import error_check_mailAPI_sub
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from django.views import View
@@ -72,6 +75,7 @@ def get_order_bill(request):
     iImage.save()
     
 # sendEmail API 
+             
 #exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
 def send_email_api(request):
     global eamilcheckFlag
@@ -79,12 +83,15 @@ def send_email_api(request):
     orderbillid = request.GET['orderbillid']
     if (orderbillid is not None) and (email is not None): #값이 안들어온 경우 로직 처리 x
         eamilcheckFlag = 0 # 초기화
-        # 0 : 로직 시작 실패 or 에러 , # 1 : 성공 , # 2 : mail setting #3 dbcon #4 mail
+        # 0 : 로직 시작 실패 or 에러 , # 1 : 성공 , # 2 : mail setting #3 dbcon #4 apple_mail
         eamilcheckFlag = apple_mail_setting(email,orderbillid,eamilcheckFlag)
-        print("로직 처리성공 여부 ? : ", eamilcheckFlag)
+        #print("로직 처리성공 여부 ? : ", eamilcheckFlag)
         if eamilcheckFlag == 1: # 내부 함수에서 문제가 생겨 처리가 안된 경우 0으로 반환 
             return JsonResponse({"result": "sucess"})
         else :
+            error_reason = error_check_mailAPI_sub(eamilcheckFlag)
+            logging.error(error_reason)
+            #필요하다면 해당 결과 프론트에 줄 수 있긴한데 프론트 만드는 분이랑 팀장님이랑 말해볼것 .. 
             return JsonResponse({"result": "false"})
     else:
         return JsonResponse({"result": "false"})
