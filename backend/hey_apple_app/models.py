@@ -11,7 +11,7 @@ from django.db import models
 
 
 class fruit(models.Model):
-    id = models.BigAutoField(primary_key=True , null=False)
+    id = models.BigIntegerField(primary_key=True , null=False)
     name = models.CharField(max_length=20 , null=False)
     harvest = models.CharField(max_length=20 , null=False)
     content = models.CharField(max_length=512 , null=False)
