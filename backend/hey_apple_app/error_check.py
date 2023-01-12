@@ -1,3 +1,23 @@
+import os, json
+from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
+from environ import ImproperlyConfigured #예외처리용2
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+secret_file = os.path.join(BASE_DIR, 'secrets.json')
+with open(secret_file) as f:
+    secrets = json.loads(f.read())
+
+def get_secret(setting):
+    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
 #sys.version 3.10 이상 부터 가능하다고 하는데 왜 안되는지 알 수 없음 ;;
 '''
 def error_check_mailAPI_reason(agrument):
