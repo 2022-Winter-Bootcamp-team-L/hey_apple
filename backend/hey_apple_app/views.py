@@ -46,6 +46,7 @@ def get_order_bill(request):
     s3_url = s3_get_image_url(s3, 'image/' + str(imageName) + '.jpg') #업로드한 이미지 url 가져오기
 
     iImage = image()
+    iImage.id = imageName
     iImage.s3_image_url = s3_url
     iImage.s3_result_image_url = s3_url
     iImage.save()
