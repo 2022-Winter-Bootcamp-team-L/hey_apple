@@ -14,10 +14,12 @@ celery
 # swagger 패키지
 drf_yasg
 
-#이미지 업로드 관련 패키지
+# 이미지 업로드 관련 패키지
 boto3 #s3 버킷 연결용
 pillow #이미지
 
+# redis
+django-redis
 
 
 #mongodb
