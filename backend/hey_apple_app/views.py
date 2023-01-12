@@ -78,57 +78,57 @@ def get_order_bill(request):
              
 #exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
 def send_email_api(request):
-    global eamilcheckFlag
+    global emailcheckFlag
     email = request.GET['email']
     orderbillid = request.GET['orderbillid']
     if (orderbillid is not None) or (email is not None): #값이 안들어온 경우 로직 처리 x
-        eamilcheckFlag = 0 # 초기화
+        emailcheckFlag = 0 # 초기화
         # 0 : 로직 시작 실패 or 에러 , # 1 : 성공 , # 2 : mail setting #3 dbcon #4 apple_mail
-        eamilcheckFlag = mail_setting(email,orderbillid,eamilcheckFlag)
-        #print("로직 처리성공 여부 ? : ", eamilcheckFlag)
-        if eamilcheckFlag == 1: # 내부 함수에서 문제가 생겨 처리가 안된 경우 0으로 반환 
+        emailcheckFlag = mail_setting(email,orderbillid,emailcheckFlag)
+        #print("로직 처리성공 여부 ? : ", emailcheckFlag)
+        if emailcheckFlag == 1: # 내부 함수에서 문제가 생겨 처리가 안된 경우 0으로 반환 
             return JsonResponse({"result": "sucess"})
         else :
-            error_reason = error_check_mailAPI_sub(eamilcheckFlag)
+            error_reason = error_check_mailAPI_sub(emailcheckFlag)
             logging.error(error_reason)
             #필요하다면 해당 결과 프론트에 줄 수 있긴한데 프론트 만드는 분이랑 팀장님이랑 말해볼것 .. 
             return JsonResponse({"result": "false"})
     else:
         return JsonResponse({"result": "false"})
 
-def mail_setting(email,orderbillid,eamilcheckFlag):
-    if eamilcheckFlag == 0 :
+def mail_setting(email,orderbillid,emailcheckFlag):
+    if emailcheckFlag == 0 :
         #setting start
         global subject
         # parshing start
         try: #parshing
             subject = email[0:email.index('@')] #이메일 아이디 가져오기
         except :
-            eamilcheckFlag=2
-            return eamilcheckFlag
+            emailcheckFlag=2
+            return emailcheckFlag
         # parshing end
         
-        eamilcheckFlag=1 
-        eamilcheckFlag = dbcon(email,orderbillid,eamilcheckFlag)
-        return eamilcheckFlag
+        emailcheckFlag=1 
+        emailcheckFlag = dbcon(email,orderbillid,emailcheckFlag)
+        return emailcheckFlag
     
     else :
-        eamilcheckFlag=2
-        return eamilcheckFlag
+        emailcheckFlag=2
+        return emailcheckFlag
     
 #mail setting End
 
 #dbconnect Start
-def dbcon(email,orderbillid,eamilcheckFlag):
-    if eamilcheckFlag == 1 :
+def dbcon(email,orderbillid,emailcheckFlag):
+    if emailcheckFlag == 1 :
         email = email
         global saveInfo
         try: #connect 
             db = pymysql.Connect(host='db' ,user="root" , password="1234", database="mysql-db")
             cursor = db.cursor()
         except :
-            eamilcheckFlag = 3
-            return eamilcheckFlag
+            emailcheckFlag = 3
+            return emailcheckFlag
         try: # query serch
             query="select total_price from orderbill where id ="+orderbillid 
             cursor.execute(query)
@@ -159,21 +159,21 @@ def dbcon(email,orderbillid,eamilcheckFlag):
                     flag +=1
                 #Fruit name , price 조회 end
         except:
-            eamilcheckFlag = 3
-            return eamilcheckFlag 
+            emailcheckFlag = 3
+            return emailcheckFlag 
           
-        eamilcheckFlag =1
-        eamilcheckFlag = send_mail(email ,saveInfo, totalPrice, eamilcheckFlag) #1 
-        return eamilcheckFlag
+        emailcheckFlag =1
+        emailcheckFlag = send_mail(email ,saveInfo, totalPrice, emailcheckFlag) #1 
+        return emailcheckFlag
     else :
-        eamilcheckFlag = 3
-        return eamilcheckFlag
+        emailcheckFlag = 3
+        return emailcheckFlag
             
 #dbconnect End
 
 #mail Send Start
-def send_mail(email , saveInfo, totalPrice, eamilcheckFlag):
-    if eamilcheckFlag == 1:
+def send_mail(email , saveInfo, totalPrice, emailcheckFlag):
+    if emailcheckFlag == 1:
         try: # context 생성 .. 이메일 본문 생성
             context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
             for i in range(len(saveInfo)):
@@ -183,8 +183,8 @@ def send_mail(email , saveInfo, totalPrice, eamilcheckFlag):
                 context +="\n"
             context = context + "\n 총가격 : " + str(totalPrice) +"\n url 넣을 공간"
         except:
-            eamilcheckFlag = 4
-            return eamilcheckFlag
+            emailcheckFlag = 4
+            return emailcheckFlag
         try: #mail Sent
             smtp = smtplib.SMTP('smtp.gmail.com',587)
             smtp.starttls()
@@ -199,12 +199,12 @@ def send_mail(email , saveInfo, totalPrice, eamilcheckFlag):
             smtp.sendmail('testproject9197@gmail.com',email,msg.as_string())
             smtp.quit()  
         except:
-            eamilcheckFlag = 4
-            return eamilcheckFlag
+            emailcheckFlag = 4
+            return emailcheckFlag
         
-        eamilcheckFlag = 1
-        return eamilcheckFlag
+        emailcheckFlag = 1
+        return emailcheckFlag
     else:
-        eamilcheckFlag = 4
-        return eamilcheckFlag
+        emailcheckFlag = 4
+        return emailcheckFlag
 #mail Send End
