@@ -25,7 +25,7 @@ import logging
 import sys
 import smtplib
 import pymysql
-from .error_check import error_check_mailAPI_sub
+from .error_check import error_check_mailAPI_sub , get_secret
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from django.views import View
@@ -65,7 +65,7 @@ def send_email_api(request):
     global eamilcheckFlag
     email = request.GET['email']
     orderbillid = request.GET['orderbillid']
-    if (orderbillid is not None) and (email is not None): #값이 안들어온 경우 로직 처리 x
+    if (orderbillid is not None) or (email is not None): #값이 안들어온 경우 로직 처리 x
         eamilcheckFlag = 0 # 초기화
         # 0 : 로직 시작 실패 or 에러 , # 1 : 성공 , # 2 : mail setting #3 dbcon #4 apple_mail
         eamilcheckFlag = apple_mail_setting(email,orderbillid,eamilcheckFlag)
@@ -138,9 +138,9 @@ def dbcon(email,orderbillid,eamilcheckFlag):
             print("eamilcheckFlag")
             eamilcheckFlag = apple_mail(email ,saveInfo, totalPrice, eamilcheckFlag) #1 
             return eamilcheckFlag
-        else :
-            eamilcheckFlag = 3
-            return eamilcheckFlag
+    else :
+        eamilcheckFlag = 3
+        return eamilcheckFlag
             
 #dbconnect End
 
@@ -159,7 +159,8 @@ def apple_mail(email , saveInfo, totalPrice, eamilcheckFlag):
         
         smtp = smtplib.SMTP('smtp.gmail.com',587)
         smtp.starttls()
-        smtp.login('testproject9197@gmail.com','joilxdqyvpihtlkf')
+        GOGLE_MAIL_KEY= get_secret("GOGLE_MAIL_KEY")
+        smtp.login('testproject9197@gmail.com',GOGLE_MAIL_KEY)
 
 
         msg = MIMEText(context)
