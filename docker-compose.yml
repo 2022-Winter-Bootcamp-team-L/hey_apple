@@ -15,7 +15,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./backend/mysql-db:/var/lib/mysql  #이거?
-    
+
   backend:
     build:
       context: ./backend
@@ -37,39 +37,39 @@ services:
     depends_on:
       - db
 
-  # nginx:
-  #       build:
-  #           context: './nginx'
-  #       command: ['nginx', '-g', 'daemon off;']
-  #       ports:
-  #           - 80:80
-  #       extra_hosts:
-  #           - 'host.docker.internal:host-gateway'
-  #       expose:
-  #           - 80
+  nginx:
+    build:
+      context: './nginx'
+    command: [ 'nginx', '-g', 'daemon off;' ]
+    ports:
+      - 80:80
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    expose:
+      - 80
 
-  # celery_worker:
-  #   container_name: celery_worker
-  #   build:
-  #     context: ./backend
-  #   volumes:
-  #     - ./backend:/backend
-  #   ports: [ ]
-  #   depends_on:
-  #     - rabbitmq
-  #     - backend
-  #   environment:
-  #     - C_FORCE_ROOT=true
-  #   command: sh -c "celery -A backend worker --loglevel=info"
+  celery_worker:
+    container_name: celery_worker
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/backend
+    ports: [ ]
+    depends_on:
+      - rabbitmq
+      - backend
+    environment:
+      - C_FORCE_ROOT=true
+    command: sh -c "celery -A backend worker --loglevel=info"
 
-  # rabbitmq:
-  #   container_name: rabbitmq
-  #   image: rabbitmq:3-management-alpine
-  #   environment:
-  #     - RABBITMQ_USER=admin
-  #     - RABBITMQ_PASSWORD=admin
-  #   ports:
-  #     - "5672:5672" # Default Port
-  #     - "15672:15672" # UI Port
-  #   expose:
-  #     - "15672"
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=admin
+    ports:
+      - "5672:5672" # Default Port
+      - "15672:15672" # UI Port
+    expose:
+      - "15672"

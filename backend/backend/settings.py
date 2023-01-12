@@ -10,12 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import pymysql
+
 pymysql.install_as_MySQLdb()
 import os, json
 from pathlib import Path
 
-from django.core.exceptions import ImproperlyConfigured # 예외처리용1
-from environ import ImproperlyConfigured #예외처리용2
+from django.core.exceptions import ImproperlyConfigured  # 예외처리용1
+from environ import ImproperlyConfigured  # 예외처리용2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -25,6 +26,7 @@ secret_file = os.path.join(BASE_DIR, 'secrets.json')
 with open(secret_file) as f:
     secrets = json.loads(f.read())
 
+
 def get_secret(setting):
     """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
     try:
@@ -32,6 +34,7 @@ def get_secret(setting):
     except KeyError:
         error_msg = "Set the {} environment variable".format(setting)
         raise ImproperlyConfigured(error_msg)
+
 
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 # Quick-start development settings - unsuitable for production
@@ -47,7 +50,6 @@ if os.getenv('DJANGO_ALLOWED_HOSTS'):
     ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(' ')
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
-
 
 # Application definition
 
@@ -92,7 +94,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -106,7 +107,6 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -126,7 +126,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -139,7 +138,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
