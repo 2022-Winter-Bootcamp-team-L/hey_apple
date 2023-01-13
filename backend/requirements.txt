@@ -1,6 +1,6 @@
 Django==4.1.5
 django-cors-headers==3.10.1
-django-environ #environ 패키지
+django-environ # environ 패키지
 djangorestframework==3.13.1
 asgiref==3.6.0
 sqlparse==0.4.3
@@ -15,13 +15,14 @@ celery
 drf_yasg
 
 # 이미지 업로드 관련 패키지
-boto3 #s3 버킷 연결용
-pillow #이미지
+boto3 # s3 버킷 연결용
+pillow # 이미지
 
 
 # redis
 django-redis
 
 #crawling
-pymongo #db driver
-selenium #크롤링 라이브러리
+pymongo # db driver
+selenium # 크롤링 라이브러리
+pandas # csv파일 생성
