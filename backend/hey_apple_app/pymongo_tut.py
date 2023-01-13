@@ -8,12 +8,18 @@ try:
 except Exception:
     print("Error" + Exception)
 
-db = client["test"] #test라는 db 생성
-collection = db["student"] #student라는 collection 생성
-post={"_id":0,"name":"kailash joshi tutorials"} # 저장할 값 생성
-
-req = collection.insert_one(post) #collection에 값 추가
-
-result = collection.find() # 값 조회
+db = client["test"]
+collection = db["student"]
+post={"_id":0,"name":"kailash joshi tutorials"}
+result = collection.find()
 for result in result:
     print(result)
+
+
+
+
+
+
+
+
+#  print(client.list_database_names())
