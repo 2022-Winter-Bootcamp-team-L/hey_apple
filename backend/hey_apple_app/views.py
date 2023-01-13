@@ -43,9 +43,10 @@ def get_fruit(request, id):
     #     return Response(serializer.data)
     # print("get redis")
     try:
-        data = cache.get_or_set(id, fruit.objects.get(id=id))  # timeout 설정 고민
-        serializer = FruitSerializer(data)
-        return Response(serializer.data)
+        obj = fruit.objects.get(id=id)
+        serializer = FruitSerializer(obj)
+        data = cache.get_or_set(id, serializer.data)  # timeout 설정 고민
+        return Response(data)
     except fruit.DoesNotExist as e:
         logging.error(f"fruit_id: {id} does not exist")
         return JsonResponse({"error": "error_page"})
