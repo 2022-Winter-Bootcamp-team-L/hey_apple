@@ -15,6 +15,10 @@ from .models import image, fruit
 from .utils import *
 from .serializers import FruitSerializer
 
+from .tasks import ai_task
+from PIL import Image
+import io
+
 
 @api_view(['GET'])
 def get_fruit(request, id):
@@ -25,23 +29,32 @@ def get_fruit(request, id):
 
 @api_view(['POST'])
 def get_order_bill(request):
-    uuidKey = str(uuid4())  # 고유한 폴더명
-    imageName = str(uuid4())  # 입력받은 이미지만의 아이디 생성
+    uuid_key = str(uuid4())  # 고유한 폴더명
+    image_name = str(uuid4())  # 입력받은 이미지만의 아이디 생성
 
     file = request.FILES['filename']  # 입력받은 이미지
-    default_storage.save('ai_image/' + uuidKey + '/' + imageName + ".jpg", file)  # 입력받은 이미지 저장
+    default_storage.save('ai_image/' + uuid_key + '/' + image_name + ".jpg", file)  # 입력 받은 이미지 저장
 
     s3 = s3_connection()  # s3 연결 확인
     s3_upload = s3_put_object(  # s3에 업로드 시도
         s3, AWS_STORAGE_BUCKET_NAME,
-        '/backend/ai_image/' + uuidKey + '/' + imageName + '.jpg',
-        'image/' + imageName + '.jpg')
-    s3_url = s3_get_image_url(s3, 'image/' + str(imageName) + '.jpg')  # 업로드한 이미지 url 가져오기
+        '/backend/ai_image/' + uuid_key + '/' + image_name + '.jpg',
+        'image/' + image_name + '.jpg')
+    s3_url = s3_get_image_url(s3, 'image/' + str(image_name) + '.jpg')  # 업로드 한 이미지 url 가져 오기
 
-    iImage = image()
-    iImage.id = imageName
-    iImage.s3_image_url = s3_url
-    iImage.s3_result_image_url = s3_url
-    iImage.save()
+    i_image = image()
+    i_image.id = image_name
+    i_image.s3_image_url = s3_url
+    i_image.s3_result_image_url = s3_url
+    i_image.save()
 
-    return JsonResponse({"s3_image_url": iImage.s3_result_image_url})
+    return i_image.s3_image_url
+    # return JsonResponse({"s3_image_url": i_image.s3_result_image_url})
+
+
+@api_view(['POST'])
+def get_task_id(request):
+    input_image = Image.open(io.BytesIO(request.FILES.get('filename').read()))
+
+    task = ai_task.delay(input_image)
+    return JsonResponse({"task_id": task.id})
