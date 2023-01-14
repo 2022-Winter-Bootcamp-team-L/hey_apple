@@ -28,7 +28,7 @@ def get_info(fruit):
     price_trend = driver.find_elements(By.XPATH, # 6일 전까지 가격
         r'//*[@id="selectDayTrendWithGubun"]/div/div/div[2]/ul')
     
-    fruit_data = { 'name': fruit_name, 'price': price_avg} # 크롤링 데이터 초기화
+    fruit_data = { 'name': fruit_name, 'avg': price_avg} # 크롤링 데이터 초기화
     # fruit_data = {}
     # fruit_data['name'] = fruit_name
     # fruit_data['price'] = price_avg # 다른 방식 초기화
@@ -36,18 +36,22 @@ def get_info(fruit):
     date = '' # N일 전 날짜 
     won = '' # N일 전 날짜 가격
     i = 0 # 줄마다 해주어야 하는 동작이 다르기 때문에 줄 구분용 변수
-    
+    id = 1
     for info in price_trend: # li를 돌면서 
         arr = info.text.split('\n')
         for text in arr:
             if i%3 == 0:
-                date = text
+                date_text = text
+                date_key = "date"+str(id)
+                price_key = "price"+str(id)
+                id = id+1
             elif i%3 == 1: # 가격만 남도록 파싱
                 temp = text.split('톤')[1]
                 won = temp.split('원')[0]
             else :
-                print(date," : ",won)
-                fruit_data[date] = won # { '날짜' : '가격' }
+                print(price_key," : ",won)
+                fruit_data[price_key] = won # { 'price0' : '3400' }
+                fruit_data[date_key] = date_text #{ 'date0' : '01.14(토 )'}
             i += 1
     
     frame = pd.DataFrame([fruit_data])
