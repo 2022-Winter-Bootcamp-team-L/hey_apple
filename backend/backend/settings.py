@@ -61,7 +61,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'hey_apple_app'
+    'hey_apple_app',
+    'django_celery_beat',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -152,3 +154,20 @@ AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = get_secret("AWS_REGION")
 AWS_STORAGE_BUCKET_NAME = get_secret("AWS_STORAGE_BUCKET_NAME")
+
+# Celery
+CELERY_BROKER_URL = 'amqp://rabbitmq:5672'
+CELERY_ACCEPT_CONTENT = ['pickle', 'json']
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Seoul'
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(1e10)
+
+# Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://redis:6379',
+    }
+}
