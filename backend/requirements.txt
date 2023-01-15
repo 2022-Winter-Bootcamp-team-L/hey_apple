@@ -7,8 +7,8 @@ sqlparse==0.4.3
 cryptography
 
 # celery 패키지
-django_celery_beat
-django_celery_results
+# django_celery_beat
+# django_celery_results
 celery
 
 # swagger 패키지
