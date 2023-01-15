@@ -36,6 +36,15 @@ services:
       - 8000
     depends_on:
       - db
+  ai:
+    container_name: "yolov5"
+    build:
+      context: ./backend/ai
+    volumes:
+      - ./backend/ai/:/ai/
+    ports:
+      - 8181:8181
+    tty: true
   redis:
     image: redis:latest
     command: redis-server --port 6379
