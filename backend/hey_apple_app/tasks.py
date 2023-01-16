@@ -152,7 +152,8 @@ def mail_task(request):
     def send_mail(email , saveInfo, totalPrice, emailcheckFlag):
         if emailcheckFlag == 1:
             try: # context 생성 .. 이메일 본문 생성
-                context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
+                context = ""
+                #context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
                 for i in range(len(saveInfo)):
                     for j in range(len(saveInfo[i])): # name , price , count
                         contea = saveInfo[i][j]
