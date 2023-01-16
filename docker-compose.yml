@@ -24,7 +24,7 @@ services:
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
     command: >
-      ash -c "python wait_for_mysql.py &&
+      sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python manage.py runserver 0.0.0.0:8000"
@@ -70,28 +70,40 @@ services:
 #       expose:
 #           - 80
 
-# celery_worker:
-#   container_name: celery_worker
-#   build:
-#     context: ./backend
-#   volumes:
-#     - ./backend:/backend
-#   ports: [ ]
-#   depends_on:
-#     - rabbitmq
-#     - backend
-#   environment:
-#     - C_FORCE_ROOT=true
-#   command: sh -c "celery -A backend worker --loglevel=info"
+  nginx:
+    build:
+      context: './nginx'
+    command: [ 'nginx', '-g', 'daemon off;' ]
+    ports:
+      - 80:80
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    expose:
+      - 80
 
-# rabbitmq:
-#   container_name: rabbitmq
-#   image: rabbitmq:3-management-alpine
-#   environment:
-#     - RABBITMQ_USER=admin
-#     - RABBITMQ_PASSWORD=admin
-#   ports:
-#     - "5672:5672" # Default Port
-#     - "15672:15672" # UI Port
-#   expose:
-#     - "15672"
+  celery_worker:
+    container_name: celery_worker
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/backend
+    ports: [ ]
+    depends_on:
+      - rabbitmq
+      - backend
+    environment:
+      - C_FORCE_ROOT=true
+    command: sh -c "celery -A backend worker --loglevel=info"
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=admin
+    ports:
+      - "5672:5672" # Default Port
+      - "15672:15672" # UI Port
+    expose:
+      - "15672"
+      

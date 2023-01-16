@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='image',
             fields=[
-                ('id', models.BigIntegerField(primary_key=True, serialize=False)),
+                ('id', models.UUIDField(primary_key=True, serialize=False)),
                 ('s3_image_url', models.CharField(max_length=512)),
                 ('s3_result_image_url', models.CharField(blank=True, max_length=512, null=True)),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
