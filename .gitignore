@@ -302,3 +302,4 @@ poetry.toml
 backend/mysql-db/*
 secrets.json
 ai_image
+/backend/hey_apple_app/migrations
