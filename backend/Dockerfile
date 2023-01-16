@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM python:3.8
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -14,10 +14,16 @@ ENV DJANGO_CORS_ORIGIN_WHITELIST $DJANGO_CORS_ORIGIN_WHITELIST
 WORKDIR /backend
 COPY requirements.txt /backend
 
-RUN apk add --no-cache \
-    libressl-dev \
-    musl-dev \
-    libffi-dev  gcc
+#RUN apk add --no-cache \
+#    libressl-dev \
+#    musl-dev \
+#    libffi-dev  gcc
+#
+#RUN apt install --no-install-recommends \
+#    libressl-dev \
+#    musl-dev \
+#    libffi-dev  gcc
+RUN apt update && apt install --no-install-recommends -y libgl1-mesa-glx build-essential
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
