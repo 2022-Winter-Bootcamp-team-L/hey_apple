@@ -7,7 +7,6 @@ urlpatterns = [
     path('fruits/<int:id>', views.get_fruit, name='fruits'),
 
     # image IO
-    path('orders', views.get_order_bill, name='orders'),
     path('orders/tasks', views.get_task_id),
 
 ]
