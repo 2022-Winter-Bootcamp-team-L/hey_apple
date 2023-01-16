@@ -24,5 +24,5 @@ django-redis
 
 #crawling
 pymongo # db driver
-selenium # 크롤링 라이브러리
-pandas # csv파일 생성
+# selenium # 크롤링 라이브러리
+# pandas # csv파일 생성

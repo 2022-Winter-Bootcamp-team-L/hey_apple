@@ -15,10 +15,17 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./backend/mysql-db:/var/lib/mysql #이거?
+    # healthcheck:
+    #   test: echo 'db.stats().ok' | mysql db:3306 --quiet
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 40s
 
   backend:
     build:
       context: ./backend
+
       args:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
@@ -34,8 +41,7 @@ services:
       - ./backend/:/backend/
     expose:
       - 8000
-    depends_on:
-      - db
+  
   redis:
     image: redis:latest
     command: redis-server --port 6379
@@ -50,13 +56,35 @@ services:
       - ./backend/redis:/redis
     ports:
       - 6379:6379
+
+
+  crawling:
+    platform: linux/amd64
+    build:
+      context: ./crawling
+    command: >     
+      sh -c "python fruits_crawling.py &&
+              python pymongo_tut.py"
+    ports:
+      - 8010:8010
+    volumes:
+      - ./crawling/:/crawling/
+    expose:
+      - 8010
+    tty: true
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+
+
+      
 # nginx:
 #       build:
 #           context: './nginx'
 #       command: ['nginx', '-g', 'daemon off;']
 #       ports:
 #           - 80:80
-#       extra_hosts:
+#       extra_hosts: 
 #           - 'host.docker.internal:host-gateway'
 #       expose:
 #           - 80
