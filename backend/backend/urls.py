@@ -16,12 +16,29 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include ,path
 from rest_framework import routers
+from drf_yasg.views import get_schema_view
+from drf_yasg       import openapi
+from rest_framework import permissions
 
 router = routers.DefaultRouter()
 # schema_url_patterns = [ ?? 이거 뭔지 잘 모르겠음
 #     path('api/v1/', include('hey_apple_app.urls')),
 #     # path('api/v1/images/', include('images.urls')),
 # ]
+
+"""
+Swagger Settings
+"""
+schema_view = get_schema_view(
+    openapi.Info(
+        title="hey-apple",
+        default_version='1.1',
+        description="hey-apple API 문서",
+        terms_of_service="https://www.google.com/policies/terms/",
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
 
 
 urlpatterns = [
