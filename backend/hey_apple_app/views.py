@@ -68,6 +68,7 @@ def get_task_id(request):
 # sendEmail API 
              
 #exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
+@api_view(['GET'])
 def send_email_api(request):
     result = mail_task(request)
 
