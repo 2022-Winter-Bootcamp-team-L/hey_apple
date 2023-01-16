@@ -26,7 +26,6 @@ from .tasks import mail_task
 import logging
 
 
-
 @api_view(['GET'])
 def get_fruit(request, id):
     # data = cache.get(id)
@@ -49,26 +48,15 @@ def get_fruit(request, id):
 
 @api_view(['POST'])
 def get_task_id(request):
-    input_image = Image.open(io.BytesIO(request.FILES.get('filename').read()))
-
+    input_image = request.FILES.get('filename')
     task = ai_task.delay(input_image)
     return JsonResponse({"task_id": task.id})
-    '''
-        '/backend/ai_image/' + uuidKey + '/' + imageName + '.jpg',
-        'image/' + imageName + '.jpg')
-    s3_url = s3_get_image_url(
-        s3, 'image/' + str(imageName) + '.jpg')  # 업로드한 이미지 url 가져오기
+# sendEmail API
 
-    iImage = image()
-    iImage.id = imageName
-    iImage.s3_image_url = s3_url
-    iImage.s3_result_image_url = s3_url
-    iImage.save()
-    '''
-# sendEmail API 
-             
-#exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
-@api_view(['GET'])
+# exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
+
+
+@ api_view(['GET'])
 def send_email_api(request):
     result = mail_task(request)
 
