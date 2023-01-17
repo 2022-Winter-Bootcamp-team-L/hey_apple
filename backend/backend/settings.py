@@ -15,8 +15,11 @@ import os
 from django.core.exceptions import ImproperlyConfigured  # 예외처리용1
 from pathlib import Path
 import pymysql
+
 pymysql.install_as_MySQLdb()
 
+from django.core.exceptions import ImproperlyConfigured  # 예외처리용1
+from environ import ImproperlyConfigured  # 예외처리용2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -51,7 +54,6 @@ if os.getenv('DJANGO_ALLOWED_HOSTS'):
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -61,8 +63,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'rest_framework',
-    'hey_apple_app'
+    'hey_apple_app',
+    'django_celery_beat',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -94,7 +99,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -141,7 +145,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -154,7 +157,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -169,3 +171,20 @@ AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = get_secret("AWS_REGION")
 AWS_STORAGE_BUCKET_NAME = get_secret("AWS_STORAGE_BUCKET_NAME")
+
+# Celery
+CELERY_BROKER_URL = 'amqp://rabbitmq:5672'
+CELERY_ACCEPT_CONTENT = ['pickle', 'json']
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Seoul'
+DATA_UPLOAD_MAX_MEMORY_SIZE = int(1e10)
+
+# Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://redis:6379',
+    }
+}
