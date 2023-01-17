@@ -9,17 +9,21 @@ import pandas as pd # csv파일 생성
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from pyvirtualdisplay import Display
 
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
+chrome_ops = webdriver.ChromeOptions()
+# 원래는 --headless로 시뮬레이션 화면 설정을 꺼놓는게 기본, 하지만 끄게 되면 값이 다르게 크롤링 되는 현상 발생
+# chrome_ops.add_argument('--headless') 
+# chrome_ops.add_argument('--no-sandbox')
+# chrome_ops.add_argument('--disable-gpu')
+# chrome_ops.add_argument('--disable-setuid-sandbox')
+# chrome_ops.add_argument('--incognito')
+# chrome_ops.add_argument('--disable-dev-shm-usage')
 
+# display = Display(visible=0, size=(1420, 1080)) # 여기서 가상화면을 실행시키기 때문에 --headless 설정 안해도 됨
+# display.start()
 
-
-driver = webdriver.Chrome('./chromedriver2')
+driver = webdriver.Chrome(options=chrome_ops)
 driver.get('https://www.nongnet.or.kr/front/M000000048/content/view.do')
 
 fruit = ['사과','배','포도','감귤','바나나','키위','파인애플','오렌지','레몬','망고','단감','아보카도']
@@ -49,6 +53,7 @@ def get_info(fruit):
     id = 1
     for info in price_trend: # li를 돌면서 
         arr = info.text.split('\n')
+        print(arr)
         for text in arr:
             if i%3 == 0:
                 date_text = text
@@ -56,14 +61,15 @@ def get_info(fruit):
                 price_key = "price"+str(id)
                 id = id+1
             elif i%3 == 1: # 가격만 남도록 파싱
+                print('text----------',text)
+                print('i ---------------',i)
                 temp = text.split('톤')[1]
                 won = temp.split('원')[0]
             else :
-                print(price_key," : ",won)
                 fruit_data[price_key] = won # { 'price0' : '3400' }
                 fruit_data[date_key] = date_text #{ 'date0' : '01.14(토 )'}
             i += 1
-    
+    print(fruit_data)
     frame = pd.DataFrame([fruit_data])
     csv = 'DB_FRUITS.csv'
     if not os.path.exists(csv): # 파일 생성 로직
@@ -107,5 +113,6 @@ for name in fruit:
     next_fruit(name)
     get_info(name)
 
+driver.quit()
 
 

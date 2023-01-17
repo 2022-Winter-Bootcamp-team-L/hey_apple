@@ -11,17 +11,19 @@ from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium import webdriver
 from pyvirtualdisplay import Display
 
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-setuid-sandbox')
-# options.add_argument('--window-size=1420,1080')
-options.add_argument('--disable-dev-shm-usage')
+chrome_ops = webdriver.ChromeOptions()
+# 원래는 --headless로 시뮬레이션 화면 설정을 꺼놓는게 기본, 하지만 끄게 되면 값이 다르게 크롤링 되는 현상 발생
+# chrome_ops.add_argument('--headless') 
+chrome_ops.add_argument('--no-sandbox')
+chrome_ops.add_argument('--disable-gpu')
+chrome_ops.add_argument('--disable-setuid-sandbox')
+chrome_ops.add_argument('--incognito')
+chrome_ops.add_argument('--disable-dev-shm-usage')
 
-display = Display(visible=0, size=(1420, 1080))  
+display = Display(visible=0, size=(1420, 1080)) # 여기서 가상화면을 실행시키기 때문에 --headless 설정 안해도 됨
 display.start()
 
-driver = webdriver.Chrome('./chromedirver',options=options)
+driver = webdriver.Chrome(options=chrome_ops)
 driver.get('https://www.nongnet.or.kr/front/M000000048/content/view.do')
 
 fruit = ['사과','배','포도','감귤','바나나','키위','파인애플','오렌지','레몬','망고','단감','아보카도']
@@ -40,12 +42,11 @@ def get_info(fruit):
     price_trend = driver.find_elements(By.XPATH, # 6일 전까지 가격
         r'//*[@id="selectDayTrendWithGubun"]/div/div/div[2]/ul')
     
-    fruit_data = { 'name': fruit_name, 'avg': price_avg} # 크롤링 데이터 초기화
+    fruit_data = { 'name': fruit_name, 'avg': price_avg.replace(',','')} # 크롤링 데이터 초기화
     # fruit_data = {}
     # fruit_data['name'] = fruit_name
     # fruit_data['price'] = price_avg # 다른 방식 초기화
 
-    date = '' # N일 전 날짜 
     won = '' # N일 전 날짜 가격
     i = 0 # 줄마다 해주어야 하는 동작이 다르기 때문에 줄 구분용 변수
     id = 1
@@ -58,14 +59,14 @@ def get_info(fruit):
                 price_key = "price"+str(id)
                 id = id+1
             elif i%3 == 1: # 가격만 남도록 파싱
+                print(text)
                 temp = text.split('톤')[1]
-                won = temp.split('원')[0]
+                won = temp.split('원')[0].replace(',','')
             else :
-                print(price_key," : ",won)
                 fruit_data[price_key] = won # { 'price0' : '3400' }
                 fruit_data[date_key] = date_text #{ 'date0' : '01.14(토 )'}
             i += 1
-    
+    print(fruit_data)
     frame = pd.DataFrame([fruit_data])
     csv = 'DB_FRUITS.csv'
     if not os.path.exists(csv): # 파일 생성 로직
@@ -102,12 +103,20 @@ def next_fruit(fruit):
     fruit_save_bt.send_keys(Keys.ENTER)
     time.sleep(0.5)
 
+def check_file():
+    file = '/backend/crawling/DB_FRUITS.csv'
+    if os.path.isfile(file):
+        os.remove(file)
+        print('이미 DB_FRUITS.csv파일이 있어 기존 파일을 삭제했습니다.')
 
+print("데이터 크롤링을 시작합니다....")
 
+check_file()
 
 for name in fruit:
     next_fruit(name)
     get_info(name)
-
+print('크롤링 완료....')
+driver.quit()
 
 
