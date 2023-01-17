@@ -9,11 +9,14 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+from environ import ImproperlyConfigured  # 예외처리용2
+import json
+import os
+from django.core.exceptions import ImproperlyConfigured  # 예외처리용1
+from pathlib import Path
 import pymysql
 
 pymysql.install_as_MySQLdb()
-import os, json
-from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured  # 예외처리용1
 from environ import ImproperlyConfigured  # 예외처리용2
@@ -108,6 +111,19 @@ DATABASES = {
         'PASSWORD': '1234',
         'HOST': 'db',
         'PORT': '3306',
+    }
+}
+
+REDIS_HOST = os.environ.get('REDIS_HOST', '127.0.0.1')
+REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
+# Redis Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis_server:6379/',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }
 
