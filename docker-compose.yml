@@ -1,5 +1,8 @@
 version: "3"
 
+volumes:
+  prometheus_data: {}
+
 services:
   db:
     image: mysql:8.0
@@ -98,17 +101,35 @@ services:
       - "15672:15672" # UI Port
     expose:
       - "15672"
-  node_exporter:
-    container_name:  node_exporter
-    image: prom/node-exporter
-    ports:
-      - 9100:9100
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - 9090:9090
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
     volumes:
-      - ./backend/mysql-db/prometheus/data/:/prometheus
-      - ./backend/mysql-db/prometheus/:/etc/prometheus/
-    restart: always
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
+      
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    expose:
+      - 9090
