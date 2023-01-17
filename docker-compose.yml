@@ -98,4 +98,17 @@ services:
       - "15672:15672" # UI Port
     expose:
       - "15672"
-      
+  node_exporter:
+    container_name:  node_exporter
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./backend/mysql-db/prometheus/data/:/prometheus
+      - ./backend/mysql-db/prometheus/:/etc/prometheus/
+    restart: always
