@@ -15,6 +15,7 @@ redis
 # swagger 패키지
 drf_yasg
 
+pymysql
 # 이미지 업로드 관련 패키지
 boto3 # s3 버킷 연결용
 pillow # 이미지
