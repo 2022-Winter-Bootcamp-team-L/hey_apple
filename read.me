@@ -1,0 +1,40 @@
+프로메테우스와 그라파나 사용을 위한 셋업입니다. 차후 더 좋은 방법을 알게 업데이트 하겠습니다
+
+설정
+
+1. sudo su (root 계정으로 접속) →  etc 디렉토리로 이동
+
+  2. 다운로드 :  wget [https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz](https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz)  
+
+  3. 압축풀기 :  tar -xvf prometheus-2.41.0.linux-amd64.tar.gz   
+
+  4. 이름변경 : mv prometheus-2.41.0.linux-amd64 prometheus
+
+  5. cd prometheus → vi  prometheus.yml
+
+  6. i 눌러서 insert → 아래코드 복사 붙여넣기 → esc → wq!(저장하고 나오기)
+
+```bash
+scrape_configs:
+- job_name: cadvisor
+  scrape_interval: 5s
+  static_configs:
+  - targets:
+    - localhost:9090
+    - cadvisor:8080
+    - node-exporter:9100
+```
+
+or
+
+  6. 루트 디렉토리에 있는 prometheus.yml 파일 복사하여서 넣어주어도 됩니다.
+
+도커 실행후 그라파나 설정
+
+1. docker-compose up
+2. [http://localhost:3000](http://localhost:3000/) 으로 접속 (grafana)
+3. 왼쪽 대시보드에 기어 모양 눌러서 들어간뒤 
+4. 이름 : Prometheus
+5. url : [http://prometheus:9090](http://prometheus:9090/) (도커 컨테이너에 올려져있는 prometheus로 접속해야한다)
+6. 맨아랫쪽으로 가서 save & test 클릭 → 설정에 실수가 없었다면 초록색 체크표시 + **Data source is working**
+7. 대시보드 접속 (나중에 만들어서 드리겠습니다람쥐)
