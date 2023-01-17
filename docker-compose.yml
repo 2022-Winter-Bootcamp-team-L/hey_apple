@@ -15,10 +15,17 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./backend/mysql-db:/var/lib/mysql #이거?
+    # healthcheck:
+    #   test: echo 'db.stats().ok' | mysql db:3306 --quiet
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 40s
 
   backend:
     build:
       context: ./backend
+
       args:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
@@ -51,13 +58,59 @@ services:
       - ./backend/redis:/redis
     ports:
       - 6379:6379
+
+
+  # crawling:
+  #   platform: linux/amd64
+  #   build:
+  #     context: ./crawling
+  #   # command: >     
+  #   #   sh -c "python fruits_crawling.py &&
+  #   #           python pymongo_tut.py"
+  #   ports:
+  #     - 8010:8010
+  #   # volumes:
+  #   #   - ./crawling/:/crawling/
+  #   expose:
+  #     - 8010
+  #   tty: true
+
+
+
+  crawling:
+    build: ./crawling
+    shm_size: 2gb
+    user: root
+
+    command: >
+      sh -c "python3 fruits_crawling.py &&
+              python3 pymongo_tut.py"
+
+    # command: >
+    #   sh -c "python3 pymongo_tut.py"    
+
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    tty: true
+
+  # selenium-hub:
+  #   image: selenium/hub:latest
+  #   container_name: selenium-hub
+  #   ports:
+  #     - "4442:4442"
+  #     - "4443:4443"
+  #     - "4444:4444"
+
+
 # nginx:
 #       build:
 #           context: './nginx'
 #       command: ['nginx', '-g', 'daemon off;']
 #       ports:
 #           - 80:80
-#       extra_hosts:
+#       extra_hosts: 
 #           - 'host.docker.internal:host-gateway'
 #       expose:
 #           - 80
