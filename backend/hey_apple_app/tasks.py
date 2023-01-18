@@ -77,8 +77,8 @@ def ai_task(request):
         f_fruitorder.orderpayment_id = o_orderpayment
         f_fruitorder.count = answer[key]
 
-        total_price += temp_fruit.price #o_orderpayment.total_price
         total_count += f_fruitorder.count
+        total_price += temp_fruit.price * total_count
 
         f_fruitorder.save()
 
