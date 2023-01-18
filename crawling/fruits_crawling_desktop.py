@@ -32,7 +32,7 @@ def get_info(fruit):
     fruit_name = driver.find_element(By.XPATH, # 과일 이름 가져오기
         r'//*[@id="gdid_selectPummokName"]').text
 
-    if fruit == '망고' or fruit == '아보카도': # 평균 가격 가져오기
+    if fruit == '망고' or fruit == '아보카도' or fruit == '배': # 평균 가격 가져오기
         price_avg = driver.find_element(By.XPATH, # 망고, 아보카도만 예외
             r'//*[@id="gcid_itemList"]/div/div/div/ul/li[1]/a/div/div/div/p/span/b').text
     else :    

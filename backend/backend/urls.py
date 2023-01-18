@@ -19,7 +19,7 @@ from rest_framework import routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-import settings
+from . import settings
 
 router = routers.DefaultRouter()
 # schema_url_patterns = [ ?? 이거 뭔지 잘 모르겠음
