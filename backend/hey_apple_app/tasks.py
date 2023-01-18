@@ -63,10 +63,10 @@ def ai_task(request):
     o_orderpayment.image_id = i_image
     o_orderpayment.save()
 
-
-    total_count = 0
     total_price = 0
-
+    total_count = 0
+    result = {}
+    fruit_list = []
 
     for key in answer:
         f_fruitorder = fruitorder()
@@ -76,17 +76,25 @@ def ai_task(request):
         f_fruitorder.fruit_id = temp_fruit
         f_fruitorder.orderpayment_id = o_orderpayment
         f_fruitorder.count = answer[key]
-
-        total_count += f_fruitorder.count
-        total_price += temp_fruit.price * total_count
-
         f_fruitorder.save()
 
+        f_list = {}
+        f_list[temp_fruit.name] = {'price': temp_fruit.price, 'count': f_fruitorder.count}
+        fruit_list.append(f_list)
+        
+        total_price += temp_fruit.price * answer[key]
+        
+    result['fruit_list'] = fruit_list
     o_orderpayment.total_price = total_price
     o_orderpayment.total_count = total_count
     o_orderpayment.save()
 
-    answer["url"] = url
+    result["total_price"] = total_price
+    result["url"] = url
+
+    print(result)
+    return result
+    
 
 @app.task
 def mail_task(request):
