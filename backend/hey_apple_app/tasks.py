@@ -11,7 +11,6 @@ from .utils import s3_connection, s3_put_object, s3_get_image_url
 # from .views import get_order_bill
 from backend.settings import AWS_STORAGE_BUCKET_NAME
 # mail
-
 import logging
 import sys
 import smtplib
@@ -90,9 +89,10 @@ def ai_task(request):
     o_orderpayment.save()
 
     result["total_price"] = total_price
-    result["url"] = url
+    result["s3_result_image_url"] = url
 
-    print(result)
+    
+    # print(result)
     return result
     
 
