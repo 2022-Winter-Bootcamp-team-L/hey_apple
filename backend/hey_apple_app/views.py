@@ -64,7 +64,7 @@ def response_result(request, task_id):
     print('result : ', task.get('result'))
     result = task.get('result')
     return JsonResponse({'result' : result})
-    
+
 
 
     # return JsonResponse(data)
