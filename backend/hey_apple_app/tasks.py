@@ -6,12 +6,11 @@ from backend.celery import app
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
 
-from .models import fruitorderbill, image
+from .models import image, orderpayment, fruitorder,fruit
 from .utils import s3_connection, s3_put_object, s3_get_image_url
 # from .views import get_order_bill
 from backend.settings import AWS_STORAGE_BUCKET_NAME
 # mail
-
 import logging
 import sys
 import smtplib
@@ -28,31 +27,23 @@ from .inference import ai_inference
 def ai_task(request):
     # url = get_order_bill(request)
     uuid_key = str(uuid4())  # 고유한 폴더명
-    image_name = str(uuid4())  # 입력받은 이미지만의 아이디 생성
+    image_uuid = str(uuid4())  # 입력받은 이미지만의 아이디 생성
 
     # file = request.FILES['filename']  # 입력받은 이미지
     # file = request.FILES.get('filename')
     file = request
     default_storage.save('ai_image/' + uuid_key + '/' +
-                         image_name + ".jpg", file)  # 입력 받은 이미지 저장
+    image_uuid + ".jpg", file)  # 입력 받은 이미지 저장
 
     s3 = s3_connection()  # s3 연결 확인
     s3_upload = s3_put_object(  # s3에 업로드 시도
         s3, AWS_STORAGE_BUCKET_NAME,
-        '/backend/ai_image/' + uuid_key + '/' + image_name + '.jpg',
-        'image/' + image_name + '.jpg')
+        '/backend/ai_image/' + uuid_key + '/' + image_uuid + '.jpg',
+        'image/' + image_uuid + '.jpg')
     s3_url = s3_get_image_url(
-        s3, 'image/' + str(image_name) + '.jpg')  # 업로드 한 이미지 url 가져 오기
+        s3, 'image/' + str(image_uuid) + '.jpg')  # 업로드 한 이미지 url 가져 오기
 
-    i_image = image()
-    i_image.id = image_name
-    i_image.s3_image_url = s3_url
-    i_image.s3_result_image_url = s3_url
-    i_image.save()
-
-    objs, url = ai_inference(i_image.s3_image_url, uuid_key)
-    i_image.s3_result_image_url = url
-    i_image.save()
+    objs, url = ai_inference(s3_url, uuid_key)
 
     answer = {}
     for obj in objs:
@@ -60,9 +51,50 @@ def ai_task(request):
             answer[obj[6]] += 1
         else:
             answer[obj[6]] = 1
-    answer["url"] = url
-    return answer
 
+    i_image = image()
+    i_image.id = image_uuid
+    i_image.s3_image_url = s3_url
+    i_image.s3_result_image_url = url
+    i_image.save()
+
+    o_orderpayment = orderpayment()
+    o_orderpayment.image_id = i_image
+    o_orderpayment.save()
+
+    total_price = 0
+    total_count = 0
+    result = {}
+    fruit_list = []
+
+    for key in answer:
+        f_fruitorder = fruitorder()
+        print('key : ',key)
+        temp_fruit = fruit.objects.get(name=key)
+        print('temp_fruit : ',temp_fruit)
+        f_fruitorder.fruit_id = temp_fruit
+        f_fruitorder.orderpayment_id = o_orderpayment
+        f_fruitorder.count = answer[key]
+        f_fruitorder.save()
+
+        f_list = {}
+        f_list[temp_fruit.name] = {'price': temp_fruit.price, 'count': f_fruitorder.count}
+        fruit_list.append(f_list)
+        
+        total_price += temp_fruit.price * answer[key]
+        
+    result['fruit_list'] = fruit_list
+    o_orderpayment.total_price = total_price
+    o_orderpayment.total_count = total_count
+    o_orderpayment.save()
+
+    result["total_price"] = total_price
+    result["s3_result_image_url"] = url
+
+    
+    # print(result)
+    return result
+    
 
 @app.task
 def mail_task(request):
@@ -70,11 +102,11 @@ def mail_task(request):
     def mail_check(request):
         global emailcheckFlag
         email = request.GET['email']
-        orderbillid = request.GET['orderbillid']
-        if (orderbillid is not None) and (email is not None):  # 값이 안들어온 경우 로직 처리 x
+        orderpaymentid = request.GET['orderpayment_id']
+        if (orderpaymentid is not None) and (email is not None):  # 값이 안들어온 경우 로직 처리 x
             emailcheckFlag = 0  # 초기화
             # 0 : 로직 시작 실패 or 에러 , # 1 : 성공 , # 2 : mail setting #3 dbcon #4 apple_mail
-            emailcheckFlag = mail_setting(email, orderbillid, emailcheckFlag)
+            emailcheckFlag = mail_setting(email, orderpaymentid, emailcheckFlag)
             # print("로직 처리성공 여부 ? : ", emailcheckFlag)
             if emailcheckFlag == 1:  # 내부 함수에서 문제가 생겨 처리가 안된 경우 0으로 반환
                 return JsonResponse({"result": "sucess"})
@@ -87,7 +119,7 @@ def mail_task(request):
             return JsonResponse({"result": "false"})
 
     # mailsetting start
-    def mail_setting(email, orderbillid, emailcheckFlag):
+    def mail_setting(email, orderpaymentid, emailcheckFlag):
         if emailcheckFlag == 0:
             # setting start
             global subject
@@ -100,7 +132,7 @@ def mail_task(request):
             # parshing end
 
             emailcheckFlag = 1
-            emailcheckFlag = dbcon(email, orderbillid, emailcheckFlag)
+            emailcheckFlag = dbcon(email, orderpaymentid, emailcheckFlag)
             return emailcheckFlag
 
         else:
@@ -110,24 +142,24 @@ def mail_task(request):
     # mail setting End
 
     # dbconnect Start
-    def dbcon(email, orderbillid, emailcheckFlag):
+    def dbcon(email, orderpaymentid, emailcheckFlag):
         if emailcheckFlag == 1:
             email = email
             global saveInfo
             try:  # connect
                 db = pymysql.Connect(host='db', user="root",
-                                     password="1234", database="mysql-db")
+                password="1234", database="mysql-db")
                 cursor = db.cursor()
             except:
                 emailcheckFlag = 3
                 return emailcheckFlag
             try:  # query serch
-                query = "select total_price from orderbill where id ="+orderbillid
+                query = "select total_price from orderpayment where id ="+orderpaymentid
                 cursor.execute(query)
                 result = cursor.fetchone()
                 totalPrice = result[0]
 
-                query2 = "select Distinct fruit_id , count from fruitorderbill where orderbill_id ="+orderbillid
+                query2 = "select Distinct fruit_id , count from fruitorder where orderpayment_id ="+orderpaymentid
                 cursor.execute(query2)
                 result = cursor.fetchall()
                 saveInfo = [[0 for col in range(3)] for row in range(

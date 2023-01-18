@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import fruit, image, orderbill, fruitorderbill
+from .models import fruit, image, orderpayment, fruitorder
 
 
 @admin.register(fruit)
@@ -13,10 +13,10 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ['id', 's3_image_url', 's3_result_image_url', 'created_at', 'updated_at', 'is_deleted']
 
 
-@admin.register(orderbill)
-class OrderBillAdmin(admin.ModelAdmin):
-    list_display = ['id', 'image_id', 'date_of_purchase', 'total_price', 'created_at', 'updated_at', 'is_deleted']
+@admin.register(orderpayment)
+class OrderPaymentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'image_id', 'total_count', 'total_price', 'created_at', 'updated_at', 'is_deleted']
 
-@admin.register(fruitorderbill)
-class FruitOrderBillAdmin(admin.ModelAdmin):
-    list_display = ['id', 'fruit_id', 'orderbill_id', 'count', 'created_at', 'updated_at', 'is_deleted']
+@admin.register(fruitorder)
+class FruitOrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'fruit_id', 'orderpayment_id', 'count', 'created_at', 'updated_at', 'is_deleted']

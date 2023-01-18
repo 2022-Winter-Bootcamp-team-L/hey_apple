@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import fruit, image, orderbill, fruitorderbill
+from .models import fruit, image, orderpayment, fruitorder
 
 
 class FruitSerializer(ModelSerializer):
@@ -14,13 +14,13 @@ class ImageSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class OrderbillSerializer(ModelSerializer):
+class OrderpaymentSerializer(ModelSerializer):
     class Meta:
-        model = orderbill
+        model = orderpayment
         fields = '__all__'
 
 
-class FruitorderbillSerializer(ModelSerializer):
+class FruitorderSerializer(ModelSerializer):
     class Meta:
-        model = fruitorderbill
+        model = fruitorder
         fields = '__all__'

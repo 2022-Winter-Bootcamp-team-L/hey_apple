@@ -25,6 +25,8 @@ import io
 from .tasks import mail_task
 import logging
 
+from celery.result import AsyncResult
+
 
 @api_view(['GET'])
 def get_fruit(request, id):
@@ -49,8 +51,23 @@ def get_fruit(request, id):
 @api_view(['POST'])
 def get_task_id(request):
     input_image = request.FILES.get('filename')
-    task = ai_task.delay(input_image)
-    return JsonResponse({"task_id": task.id})
+    task_id = ai_task.delay(input_image)
+    return JsonResponse({"task_id": task_id.id})
+
+
+@api_view(['GET'])
+def response_result(request, task_id):
+    task = AsyncResult(task_id)
+    # print('task : ',task.get('result'))
+    if not task.ready():
+        return JsonResponse({"ai_resutl" : "notyet"})
+    print('result : ', task.get('result'))
+    result = task.get('result')
+    return JsonResponse({'result' : result})
+
+
+
+    # return JsonResponse(data)
 # sendEmail API
 
 # exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
