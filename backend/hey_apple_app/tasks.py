@@ -6,7 +6,7 @@ from backend.celery import app
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
 
-from .models import image, orderbill, fruitorderbill
+from .models import image, orderpayment, fruitorder,fruit
 from .utils import s3_connection, s3_put_object, s3_get_image_url
 # from .views import get_order_bill
 from backend.settings import AWS_STORAGE_BUCKET_NAME
@@ -52,8 +52,6 @@ def ai_task(request):
             answer[obj[6]] += 1
         else:
             answer[obj[6]] = 1
-    answer["url"] = url
-    print('***********************************',answer)
 
     i_image = image()
     i_image.id = image_uuid
@@ -61,13 +59,34 @@ def ai_task(request):
     i_image.s3_result_image_url = url
     i_image.save()
 
-    o_orderbill = orderbill()
-    o_orderbill.image_id = i_image
-    o_orderbill.save()
+    o_orderpayment = orderpayment()
+    o_orderpayment.image_id = i_image
+    o_orderpayment.save()
 
-    f_fruitorderbill = fruitorderbill()
-    # f_fruitorderbill.
 
+    total_count = 0
+    total_price = 0
+
+
+    for key in answer:
+        f_fruitorder = fruitorder()
+        print('key : ',key)
+        temp_fruit = fruit.objects.get(name=key)
+        print('temp_fruit : ',temp_fruit)
+        f_fruitorder.fruit_id = temp_fruit
+        f_fruitorder.orderpayment_id = o_orderpayment
+        f_fruitorder.count = answer[key]
+
+        total_price += temp_fruit.price #o_orderpayment.total_price
+        total_count += f_fruitorder.count
+
+        f_fruitorder.save()
+
+    o_orderpayment.total_price = total_price
+    o_orderpayment.total_count = total_count
+    o_orderpayment.save()
+
+    answer["url"] = url
 
 @app.task
 def mail_task(request):
@@ -75,11 +94,11 @@ def mail_task(request):
     def mail_check(request):
         global emailcheckFlag
         email = request.GET['email']
-        orderbillid = request.GET['orderbillid']
-        if (orderbillid is not None) and (email is not None):  # 값이 안들어온 경우 로직 처리 x
+        orderpaymentid = request.GET['orderpayment_id']
+        if (orderpaymentid is not None) and (email is not None):  # 값이 안들어온 경우 로직 처리 x
             emailcheckFlag = 0  # 초기화
             # 0 : 로직 시작 실패 or 에러 , # 1 : 성공 , # 2 : mail setting #3 dbcon #4 apple_mail
-            emailcheckFlag = mail_setting(email, orderbillid, emailcheckFlag)
+            emailcheckFlag = mail_setting(email, orderpaymentid, emailcheckFlag)
             # print("로직 처리성공 여부 ? : ", emailcheckFlag)
             if emailcheckFlag == 1:  # 내부 함수에서 문제가 생겨 처리가 안된 경우 0으로 반환
                 return JsonResponse({"result": "sucess"})
@@ -92,7 +111,7 @@ def mail_task(request):
             return JsonResponse({"result": "false"})
 
     # mailsetting start
-    def mail_setting(email, orderbillid, emailcheckFlag):
+    def mail_setting(email, orderpaymentid, emailcheckFlag):
         if emailcheckFlag == 0:
             # setting start
             global subject
@@ -105,7 +124,7 @@ def mail_task(request):
             # parshing end
 
             emailcheckFlag = 1
-            emailcheckFlag = dbcon(email, orderbillid, emailcheckFlag)
+            emailcheckFlag = dbcon(email, orderpaymentid, emailcheckFlag)
             return emailcheckFlag
 
         else:
@@ -115,24 +134,24 @@ def mail_task(request):
     # mail setting End
 
     # dbconnect Start
-    def dbcon(email, orderbillid, emailcheckFlag):
+    def dbcon(email, orderpaymentid, emailcheckFlag):
         if emailcheckFlag == 1:
             email = email
             global saveInfo
             try:  # connect
                 db = pymysql.Connect(host='db', user="root",
-                                     password="1234", database="mysql-db")
+                password="1234", database="mysql-db")
                 cursor = db.cursor()
             except:
                 emailcheckFlag = 3
                 return emailcheckFlag
             try:  # query serch
-                query = "select total_price from orderbill where id ="+orderbillid
+                query = "select total_price from orderpayment where id ="+orderpaymentid
                 cursor.execute(query)
                 result = cursor.fetchone()
                 totalPrice = result[0]
 
-                query2 = "select Distinct fruit_id , count from fruitorderbill where orderbill_id ="+orderbillid
+                query2 = "select Distinct fruit_id , count from fruitorder where orderpayment_id ="+orderpaymentid
                 cursor.execute(query2)
                 result = cursor.fetchall()
                 saveInfo = [[0 for col in range(3)] for row in range(

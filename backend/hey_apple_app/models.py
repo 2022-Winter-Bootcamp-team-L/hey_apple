@@ -37,27 +37,28 @@ class image(models.Model):
         db_table = 'image'
 
 
-class orderbill(models.Model):
+class orderpayment(models.Model):
     id = models.BigAutoField(primary_key=True)
     image_id = models.ForeignKey("image", related_name="image", on_delete=models.CASCADE, db_column="image_id")
-    date_of_purchase = models.DateTimeField(default=timezone.now, null=False)
+    # date_of_purchase = models.DateTimeField(default=timezone.now, null=False)
+    total_count = models.BigIntegerField(blank=True, null=True)
     total_price = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
     is_deleted = models.IntegerField(null=False, default=1)
 
     class Meta:
-        db_table = 'orderbill'
+        db_table = 'orderpayment'
 
 
-class fruitorderbill(models.Model):
+class fruitorder(models.Model):
     id = models.BigAutoField(primary_key=True)
     fruit_id = models.ForeignKey("fruit", related_name="fruit", on_delete=models.CASCADE, db_column="fruit_id")
-    orderbill_id = models.ForeignKey("orderbill", related_name="orderbill", on_delete=models.CASCADE, db_column="orderbill_id")
+    orderpayment_id = models.ForeignKey("orderpayment", related_name="orderpayment", on_delete=models.CASCADE, db_column="orderpayment_id")
     count = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
     is_deleted = models.IntegerField(null=False, default=1)
 
     class Meta:
-        db_table = 'fruitorderbill'
+        db_table = 'fruitorder'
