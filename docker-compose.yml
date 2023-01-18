@@ -1,5 +1,9 @@
 version: "3"
 
+volumes:
+  prometheus_data: {}
+
+
 services:
   db:
     image: mysql:8.0
@@ -20,6 +24,7 @@ services:
     container_name: backend
     build:
       context: ./backend
+
       args:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
@@ -52,7 +57,25 @@ services:
       - ./backend/redis:/redis
     ports:
       - 6379:6379
+      
+  crawling:
+    build: ./crawling
+    shm_size: 2gb
+    user: root
 
+    command: >
+      sh -c "python3 fruits_crawling.py &&
+              python3 pymongo_tut.py"
+
+    # command: >
+    #   sh -c "python3 pymongo_tut.py"    
+
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    tty: true
+    
   nginx:
     container_name: nginx
     build:
@@ -89,3 +112,47 @@ services:
       - "15672:15672" # UI Port
     expose:
       - "15672"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+    - 9090:9090
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+    - cadvisor
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    expose:
+      - 9100
+    ports:
+    - 9100:9100
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+    - 8080:8080
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    links:
+      - prometheus:prometheus
+    ports:
+    - 3000:3000
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=myadmin
+      - GF_USERS_ALLOW_SIGN_UP=false

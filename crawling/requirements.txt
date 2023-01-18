@@ -1,0 +1,10 @@
+
+#crawling
+pymongo # db driver
+selenium # 크롤링 라이브러리
+pandas # csv파일 생성
+webdriver-manager
+
+
+pymysql
+pyvirtualdisplay # 가상 화면 생성
