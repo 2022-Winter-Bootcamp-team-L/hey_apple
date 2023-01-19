@@ -32,9 +32,10 @@ or
 도커 실행후 그라파나 설정
 
 1. docker-compose up
-2. [http://localhost:3000](http://localhost:3000/) 으로 접속 (grafana)
-3. 왼쪽 대시보드에 기어 모양 눌러서 들어간뒤 
-4. 이름 : Prometheus
-5. url : [http://prometheus:9090](http://prometheus:9090/) (도커 컨테이너에 올려져있는 prometheus로 접속해야한다)
-6. 맨아랫쪽으로 가서 save & test 클릭 → 설정에 실수가 없었다면 초록색 체크표시 + **Data source is working**
-7. 대시보드 접속 (나중에 만들어서 드리겠습니다람쥐)
+2. http://localhost:8080/containers/ 들어가서 cadvisor 에 우리가 만든 도커 컨테이너들 잘 뜨는지 확인 -> 없으면 연락바람 , http://localhost:9100/metrics
+3. [http://localhost:3000](http://localhost:3000/) 으로 접속 (grafana)
+4. 왼쪽 대시보드에 기어 모양 눌러서 들어간뒤 
+5. 이름 : Prometheus
+6. url : [http://prometheus:9090](http://prometheus:9090/) (도커 컨테이너에 올려져있는 prometheus로 접속해야한다)
+7. 맨아랫쪽으로 가서 save & test 클릭 → 설정에 실수가 없었다면 초록색 체크표시 + **Data source is working**
+7. 기어 눌렀던곳 위에서부터  4번째꺼 눌러서 import 아이디 입력 9621 -> 도커 상태 + http request 상태 확인 -> 나중에 프론트 붙으면 확인할 것
