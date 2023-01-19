@@ -1,7 +1,9 @@
 from pymongo import MongoClient
 from pymysql import connect
+from datetime import datetime
 import pandas as pd
 import certifi
+
 ca = certifi.where()
 
 
@@ -28,9 +30,9 @@ except Exception:
 
 
 def insert_mongo(): #파일을 읽어 mongodb에 데이터 추가
-    
+    today = datetime.now().strftime('%Y-%m-%d')
     db = mongo_client['heyapple']
-    collection = db['fruits_data']
+    collection = db[today]
 
     file = pd.read_csv("DB_FRUITS.csv", encoding="utf-8")
     print('csv파일 분석')
@@ -39,8 +41,9 @@ def insert_mongo(): #파일을 읽어 mongodb에 데이터 추가
 
 
 def insert_fruit_price():
+    today = datetime.now().strftime('%Y-%m-%d')
     mongo_db = mongo_client['heyapple']
-    collection = mongo_db['fruits_data']
+    collection = mongo_db[today]
 
     fruits = collection.find()
     print('mongodb에서 값 가져오기')    
@@ -49,6 +52,7 @@ def insert_fruit_price():
     for data in fruits:
         name = data['name']
         avg = data['avg']
+        print('name : ',name, '------ avg : ', avg)
         sql = "UPDATE fruit SET price = %s WHERE name = %s"
         injection = (str(avg),str(name))
         mysql_cursor.execute(sql,injection)
