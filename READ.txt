@@ -32,7 +32,7 @@ or
 도커 실행후 그라파나 설정
 
 1. docker-compose up
-2. http://localhost:8080/containers/ 들어가서 cadvisor 에 우리가 만든 도커 컨테이너들 잘 뜨는지 확인 -> 없으면 연락바람
+2. http://localhost:8080/containers/ 들어가서 cadvisor 에 우리가 만든 도커 컨테이너들 잘 뜨는지 확인 -> 없으면 연락바람 , http://localhost:9100/metrics
 3. [http://localhost:3000](http://localhost:3000/) 으로 접속 (grafana)
 4. 왼쪽 대시보드에 기어 모양 눌러서 들어간뒤 
 5. 이름 : Prometheus
