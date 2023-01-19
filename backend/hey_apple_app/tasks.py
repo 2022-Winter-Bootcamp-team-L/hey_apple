@@ -88,6 +88,7 @@ def ai_task(request):
     o_orderpayment.total_count = total_count
     o_orderpayment.save()
 
+    result['orderpayment_id'] = o_orderpayment.id
     result["total_price"] = total_price
     result["s3_result_image_url"] = url
 
@@ -200,15 +201,15 @@ def mail_task(request):
     def send_mail(email, saveInfo, totalPrice, emailcheckFlag):
         if emailcheckFlag == 1:
             try:  # context 생성 .. 이메일 본문 생성
-                context = ""
-                # context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
+                #context = ""
+                context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
                 for i in range(len(saveInfo)):
                     for j in range(len(saveInfo[i])):  # name , price , count
                         contea = saveInfo[i][j]
                         context = context + " "+str(contea)
                     context += "\n"
                 context = context + "\n 총가격 : " + \
-                    str(totalPrice) + "\n url 넣을 공간"
+                    str(totalPrice) + "\n http://3.39.167.173" # 나중에 도메인 사면 수정할 것
             except:
                 emailcheckFlag = 4
                 return emailcheckFlag
