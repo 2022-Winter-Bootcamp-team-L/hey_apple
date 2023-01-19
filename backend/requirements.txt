@@ -24,10 +24,8 @@ pillow # 이미지
 # redis
 django-redis
 
-#crawling
-pymongo # db driver
-
-pandas # csv파일 생성
+# gunicorn
+gunicorn
 
 # Yolo ------------------------------------------------------------------------
 gitpython
