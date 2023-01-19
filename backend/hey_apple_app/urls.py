@@ -1,16 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from .views import FruitsInfo, FruitsImage, FruitsPayment, EmailPost
 
 
 urlpatterns = [
-    path('fruits/<int:id>', views.get_fruit, name='fruits'),
-
-    # image IO
-    #path('orders', views.get_order_bill, name='orders'),
-    path('orders/tasks', views.get_task_id),
-
-    #path('orders', views.get_order_bill, name='orders'),
-    path('bills', views.send_email_api),
-    path('orders/tasks/<task_id>', views.response_result)
+    path('fruits/<int:id>', FruitsInfo.as_view()),
+    path('orders/tasks', FruitsImage.as_view()),
+    path('orders/tasks/<task_id>', FruitsPayment.as_view()),
+    path('bills', EmailPost.as_view())
 ]
