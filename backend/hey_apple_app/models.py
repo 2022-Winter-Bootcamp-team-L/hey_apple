@@ -27,8 +27,10 @@ class fruit(models.Model):
 
 class image(models.Model):
     id = models.UUIDField(primary_key=True)
+    orderpayment_id = models.ForeignKey("orderpayment", related_name="orderpayment", on_delete=models.CASCADE, db_column="orderpayment_id")
     s3_image_url = models.CharField(max_length=512, null=False)
     s3_result_image_url = models.CharField(max_length=512, blank=True, null=True)
+    image_price = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
     is_deleted = models.IntegerField(null=False, default=0)
@@ -39,9 +41,6 @@ class image(models.Model):
 
 class orderpayment(models.Model):
     id = models.BigAutoField(primary_key=True)
-    image_id = models.ForeignKey("image", related_name="image", on_delete=models.CASCADE, db_column="image_id")
-    # date_of_purchase = models.DateTimeField(default=timezone.now, null=False)
-    total_count = models.BigIntegerField(blank=True, null=True)
     total_price = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
@@ -54,7 +53,7 @@ class orderpayment(models.Model):
 class fruitorder(models.Model):
     id = models.BigAutoField(primary_key=True)
     fruit_id = models.ForeignKey("fruit", related_name="fruit", on_delete=models.CASCADE, db_column="fruit_id")
-    orderpayment_id = models.ForeignKey("orderpayment", related_name="orderpayment", on_delete=models.CASCADE, db_column="orderpayment_id")
+    image_id = models.ForeignKey("image", related_name="image", on_delete=models.CASCADE, db_column="image_id")
     count = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
