@@ -73,3 +73,17 @@ services:
   #     - "15672:15672" # UI Port
   #   expose:
   #     - "15672"
+
+  frontend:
+    build:
+      context: ./frontend
+    command: ["npm", "start"]
+    ports:
+      - 80:3000
+    volumes:
+      - ./frontend/:/frontend
+      - ./frontend/node_modules/:/frontend/node_modules
+    environment:
+      - CI=true
+      - CHOKIDAR_USEPOLLING=true
+    tty: true
