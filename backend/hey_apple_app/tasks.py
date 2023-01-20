@@ -52,18 +52,19 @@ def ai_task(request):
         else:
             answer[obj[6]] = 1
 
+    o_orderpayment = orderpayment() # 주문 생성
+    o_orderpayment.save()
+
     i_image = image()
     i_image.id = image_uuid
+    i_image.orderpayment_id = o_orderpayment.id
     i_image.s3_image_url = s3_url
     i_image.s3_result_image_url = url
     i_image.save()
 
-    o_orderpayment = orderpayment()
-    o_orderpayment.image_id = i_image
-    o_orderpayment.save()
+    
 
-    total_price = 0
-    total_count = 0
+    image_price = 0
     result = {}
     fruit_list = []
 
@@ -73,7 +74,7 @@ def ai_task(request):
         temp_fruit = fruit.objects.get(name=key)
         print('temp_fruit : ',temp_fruit)
         f_fruitorder.fruit_id = temp_fruit
-        f_fruitorder.orderpayment_id = o_orderpayment
+        f_fruitorder.image_id = i_image.id
         f_fruitorder.count = answer[key]
         f_fruitorder.save()
 
@@ -81,15 +82,18 @@ def ai_task(request):
         f_list[temp_fruit.name] = {'price': temp_fruit.price, 'count': f_fruitorder.count}
         fruit_list.append(f_list)
         
-        total_price += temp_fruit.price * answer[key]
+        image_price += temp_fruit.price * answer[key]
         
     result['fruit_list'] = fruit_list
-    o_orderpayment.total_price = total_price
-    o_orderpayment.total_count = total_count
-    o_orderpayment.save()
+    i_image.image_price = image_price
+    
+    i_image.save() # 이미지 끝
+
+
+    
 
     result['orderpayment_id'] = o_orderpayment.id
-    result["total_price"] = total_price
+    result["image_price"] = image_price
     result["s3_result_image_url"] = url
 
     
