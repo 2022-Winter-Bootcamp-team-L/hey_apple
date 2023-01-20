@@ -43,10 +43,14 @@ class FruitsImage(APIView):
     @swagger_auto_schema(manual_parameters=[type])
     
     def post(self, request):
-        print('filename : ----- ',request.FILES)
-        input_image = request.FILES.get('filename')
-        task_id = ai_task.delay(input_image)
-        return JsonResponse({"task_id": task_id.id}) 
+        image_list = request.FILES.getlist('filename')
+        task_id_list = {}
+        num = 1
+        for image in image_list:
+            task_id = ai_task.delay(image)
+            task_id_list['task_id'+str(num)] = task_id.id
+            num = num+1
+        return JsonResponse({"result": task_id_list}) 
 
 class FruitsPayment(APIView):
     task_id = openapi.Parameter('task_id', openapi.IN_PATH, type=openapi.TYPE_STRING, description='task_id를 입력하세요.')
