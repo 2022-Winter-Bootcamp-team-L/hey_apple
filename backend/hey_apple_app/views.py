@@ -24,48 +24,58 @@ from celery.result import AsyncResult
 
 
 class FruitsInfo(APIView):
-    id = openapi.Parameter('id', openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='원하는 과일 id를 입력하세요.')
+    id = openapi.Parameter(
+        'id', openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='원하는 과일 id를 입력하세요.')
+
     @swagger_auto_schema(manual_parameters=[id])
     def get(self, request, id):
         try:
-            obj = fruit.objects.get(id=id)
-            serializer = FruitSerializer(obj)
-            data = cache.get_or_set(id, serializer.data)  # timeout 설정 고민
+            data = cache.get_or_set(id, FruitSerializer(
+                fruit.objects.get(id=id)).data)  # timeout 설정 고민
             return Response(data)
         except fruit.DoesNotExist as e:
             logging.error(f"fruit_id: {id} does not exist")
         return JsonResponse({"error": "error_page"})
 
+
 class FruitsImage(APIView):
     parser_classes = [MultiPartParser]
-    
-    type = openapi.Parameter('filename',openapi.IN_FORM, type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
+
+    type = openapi.Parameter('filename', openapi.IN_FORM,
+                             type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
+
     @swagger_auto_schema(manual_parameters=[type])
-    
     def post(self, request):
-        print('filename : ----- ',request.FILES)
+        print('filename : ----- ', request.FILES)
         input_image = request.FILES.get('filename')
         task_id = ai_task.delay(input_image)
-        return JsonResponse({"task_id": task_id.id}) 
+        return JsonResponse({"task_id": task_id.id})
+
 
 class FruitsPayment(APIView):
-    task_id = openapi.Parameter('task_id', openapi.IN_PATH, type=openapi.TYPE_STRING, description='task_id를 입력하세요.')
+    task_id = openapi.Parameter(
+        'task_id', openapi.IN_PATH, type=openapi.TYPE_STRING, description='task_id를 입력하세요.')
+
     @swagger_auto_schema(manual_parameters=[task_id])
     def get(self, request, task_id):
         task = AsyncResult(task_id)
         if not task.ready():
-            return JsonResponse({"ai_resutl" : "notyet"})
+            return JsonResponse({"ai_resutl": "notyet"})
         print('result : ', task.get('result'))
         result = task.get('result')
-        return JsonResponse({'result' : result})
+        return JsonResponse({'result': result})
 
 # sendEmail API
 # exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
 
+
 class EmailPost(APIView):
-    email = openapi.Parameter('email', openapi.IN_QUERY, type=openapi.TYPE_STRING, description='email를 입력하세요.')
-    orderpayment_id = openapi.Parameter('orderpayment_id', openapi.IN_QUERY, type=openapi.TYPE_STRING, description='orderpayment_id를 입력하세요.')
-    @swagger_auto_schema(manual_parameters=[email,orderpayment_id])
+    email = openapi.Parameter(
+        'email', openapi.IN_QUERY, type=openapi.TYPE_STRING, description='email를 입력하세요.')
+    orderpayment_id = openapi.Parameter(
+        'orderpayment_id', openapi.IN_QUERY, type=openapi.TYPE_STRING, description='orderpayment_id를 입력하세요.')
+
+    @swagger_auto_schema(manual_parameters=[email, orderpayment_id])
     def get(self, request):
         result = mail_task(request)
         return result
