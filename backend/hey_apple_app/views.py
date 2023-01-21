@@ -1,4 +1,3 @@
-import time
 import logging
 from rest_framework.views import APIView, exceptions
 from rest_framework.parsers import MultiPartParser
