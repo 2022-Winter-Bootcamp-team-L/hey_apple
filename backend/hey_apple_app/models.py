@@ -40,7 +40,7 @@ class image(models.Model):
 
 
 class orderpayment(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id = models.UUIDField(primary_key=True)
     total_price = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)

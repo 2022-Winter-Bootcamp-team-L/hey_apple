@@ -24,7 +24,7 @@ from .inference import ai_inference
 
 
 @app.task
-def ai_task(request):
+def ai_task(request, orderpayment_id):
     # url = get_order_bill(request)
     uuid_key = str(uuid4())  # 고유한 폴더명
     image_uuid = str(uuid4())  # 입력받은 이미지만의 아이디 생성
@@ -52,12 +52,11 @@ def ai_task(request):
         else:
             answer[obj[6]] = 1
 
-    o_orderpayment = orderpayment() # 주문 생성
-    o_orderpayment.save()
+    o_orderpayment, is_o_created = orderpayment.objects.get_or_create(id=orderpayment_id)
 
     i_image = image()
     i_image.id = image_uuid
-    i_image.orderpayment_id = o_orderpayment.id
+    i_image.orderpayment_id = o_orderpayment
     i_image.s3_image_url = s3_url
     i_image.s3_result_image_url = url
     i_image.save()
@@ -74,7 +73,7 @@ def ai_task(request):
         temp_fruit = fruit.objects.get(name=key)
         print('temp_fruit : ',temp_fruit)
         f_fruitorder.fruit_id = temp_fruit
-        f_fruitorder.image_id = i_image.id
+        f_fruitorder.image_id = i_image
         f_fruitorder.count = answer[key]
         f_fruitorder.save()
 
@@ -86,11 +85,14 @@ def ai_task(request):
         
     result['fruit_list'] = fruit_list
     i_image.image_price = image_price
-    
+
+    # o_orderpayment.total_price += image_price
+    o_orderpayment.save()
+
     i_image.save() # 이미지 끝
 
 
-    
+
 
     result['orderpayment_id'] = o_orderpayment.id
     result["image_price"] = image_price

@@ -21,6 +21,7 @@ from .tasks import mail_task
 import logging
 
 from celery.result import AsyncResult
+from uuid import uuid4
 
 
 class FruitsInfo(APIView):
@@ -46,8 +47,10 @@ class FruitsImage(APIView):
         image_list = request.FILES.getlist('filename')
         task_id_list = {}
         num = 1
+        orderpayment_id = uuid4()
+
         for image in image_list:
-            task_id = ai_task.delay(image)
+            task_id = ai_task.delay(image, orderpayment_id)
             task_id_list['task_id'+str(num)] = task_id.id
             num = num+1
         return JsonResponse({"result": task_id_list}) 
