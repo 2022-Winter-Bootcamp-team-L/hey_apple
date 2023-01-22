@@ -7,6 +7,7 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse
 
 from .models import image, orderpayment, fruitorder,fruit
+from .serializers import FruitSerializer
 from .utils import s3_connection, s3_put_object, s3_get_image_url
 # from .views import get_order_bill
 from backend.settings import AWS_STORAGE_BUCKET_NAME
@@ -67,18 +68,20 @@ def ai_task(request, orderpayment_id):
     result = {}
     fruit_list = []
 
+    print('answer : --------------- ',answer)
+
     for key in answer:
         f_fruitorder = fruitorder()
-        print('key : ',key)
         temp_fruit = fruit.objects.get(name=key)
-        print('temp_fruit : ',temp_fruit)
         f_fruitorder.fruit_id = temp_fruit
         f_fruitorder.image_id = i_image
         f_fruitorder.count = answer[key]
         f_fruitorder.save()
 
         f_list = {}
-        f_list[temp_fruit.name] = {'price': temp_fruit.price, 'count': f_fruitorder.count}
+        serializer = FruitSerializer(temp_fruit)
+        f_list['fruit_info'] = serializer.data
+        f_list['count'] = f_fruitorder.count
         fruit_list.append(f_list)
         
         image_price += temp_fruit.price * answer[key]

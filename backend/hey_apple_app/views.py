@@ -37,6 +37,7 @@ class FruitsInfo(APIView):
             logging.error(f"fruit_id: {id} does not exist")
         return JsonResponse({"error": "error_page"})
 
+
 class FruitsImage(APIView):
     parser_classes = [MultiPartParser]
     
@@ -45,26 +46,48 @@ class FruitsImage(APIView):
     
     def post(self, request):
         image_list = request.FILES.getlist('filename')
-        task_id_list = {}
+        task_id_list = []
         num = 1
         orderpayment_id = uuid4()
 
         for image in image_list:
+            
             task_id = ai_task.delay(image, orderpayment_id)
-            task_id_list['task_id'+str(num)] = task_id.id
+            task_id_list.append(task_id.id)
             num = num+1
-        return JsonResponse({"result": task_id_list}) 
+
+        cache.set(orderpayment_id,task_id_list)
+        return JsonResponse({"task_id": orderpayment_id}) 
 
 class FruitsPayment(APIView):
     task_id = openapi.Parameter('task_id', openapi.IN_PATH, type=openapi.TYPE_STRING, description='task_id를 입력하세요.')
     @swagger_auto_schema(manual_parameters=[task_id])
     def get(self, request, task_id):
-        task = AsyncResult(task_id)
-        if not task.ready():
-            return JsonResponse({"ai_resutl" : "notyet"})
-        print('result : ', task.get('result'))
-        result = task.get('result')
-        return JsonResponse({'result' : result})
+        result_list = []
+        task_id_list = cache.get(task_id)
+        for task_id in task_id_list:
+            task = AsyncResult(task_id)
+            if not task.ready():
+                return JsonResponse({"ai_resutl" : "notyet"})
+            result_list.append(task.get('result'))
+
+        total_price = 0
+        result_url_list = []
+        fruit_list = {}
+        orderpayment_id = ''
+        for image in result_list:
+            for info in image['fruit_list']:
+                name = info['fruit_info']['name']
+                count = info['count']
+                if not name in fruit_list:
+                    fruit_list[name] = 0
+                fruit_list[name] += int(count)
+            orderpayment_id = image['orderpayment_id']
+            total_price += image['image_price']
+            result_url_list.append(image['s3_result_image_url'])
+
+        return JsonResponse({'fruit_list': fruit_list,'orderpayment_id': orderpayment_id,
+        'total_price': total_price, 'result_url_list': result_url_list})
 
 # sendEmail API
 # exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
