@@ -26,12 +26,9 @@ from .inference import ai_inference
 
 @app.task
 def ai_task(request, orderpayment_id):
-    # url = get_order_bill(request)
     uuid_key = str(uuid4())  # 고유한 폴더명
     image_uuid = str(uuid4())  # 입력받은 이미지만의 아이디 생성
 
-    # file = request.FILES['filename']  # 입력받은 이미지
-    # file = request.FILES.get('filename')
     file = request
     default_storage.save('ai_image/' + uuid_key + '/' +
     image_uuid + ".jpg", file)  # 입력 받은 이미지 저장
@@ -53,8 +50,10 @@ def ai_task(request, orderpayment_id):
         else:
             answer[obj[6]] = 1
 
+    # 하나의 주문에 같이 분석된 이미지들이 공통적으로 가지고 있어야 할 orderpayment가 있는지 확인 후 없다면 생성
     o_orderpayment, is_o_created = orderpayment.objects.get_or_create(id=orderpayment_id)
 
+    # 분석된 이미지 객체 생성
     i_image = image()
     i_image.id = image_uuid
     i_image.orderpayment_id = o_orderpayment
@@ -62,15 +61,12 @@ def ai_task(request, orderpayment_id):
     i_image.s3_result_image_url = url
     i_image.save()
 
-    
-
     image_price = 0
     result = {}
     fruit_list = []
 
-    print('answer : --------------- ',answer)
-
-    for key in answer:
+    
+    for key in answer: # 이미지 분석 결과 로직,
         f_fruitorder = fruitorder()
         temp_fruit = fruit.objects.get(name=key)
         f_fruitorder.fruit_id = temp_fruit
@@ -78,10 +74,10 @@ def ai_task(request, orderpayment_id):
         f_fruitorder.count = answer[key]
         f_fruitorder.save()
 
-        f_list = {}
+        f_list = {} # 과일 정보
         serializer = FruitSerializer(temp_fruit)
         f_list['fruit_info'] = serializer.data
-        f_list['count'] = f_fruitorder.count
+        f_list['count'] = f_fruitorder.count # 과일 개수
         fruit_list.append(f_list)
         
         image_price += temp_fruit.price * answer[key]
@@ -89,20 +85,14 @@ def ai_task(request, orderpayment_id):
     result['fruit_list'] = fruit_list
     i_image.image_price = image_price
 
-    # o_orderpayment.total_price += image_price
     o_orderpayment.save()
 
     i_image.save() # 이미지 끝
-
-
-
 
     result['orderpayment_id'] = o_orderpayment.id
     result["image_price"] = image_price
     result["s3_result_image_url"] = url
 
-    
-    # print(result)
     return result
     
 

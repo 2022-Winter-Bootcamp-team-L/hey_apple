@@ -99,9 +99,3 @@ class EmailPost(APIView):
     def get(self, request):
         result = mail_task(request)
         return result
-
-# @ api_view(['GET'])
-# def send_email_api(request):
-#     result = mail_task(request)
-
-#     return result

@@ -41,13 +41,9 @@ def error_check_mailAPI_reason(agrument):
 
 def error_check_mailAPI_sub(arg):
     error_check = {0:"send_email_api check - unknown error : code check", 
-                   1: "success - 여기 들어오면 안되는데?",
-               2: "mail setting check - maybe parsing error", 
-               3: "dbcon check - maybe 투플이 없는 경우", 
-               4: "mail check - maybe send error"}
+                1: "success - 여기 들어오면 안되는데?",
+                2: "mail setting check - maybe parsing error", 
+                3: "dbcon check - maybe 투플이 없는 경우", 
+                4: "mail check - maybe send error"}
     
     return error_check[arg]
-    #print(error_check[arg])
-    #for k, v in error_check.items():
-        #print("key: {}, value: {}".format(k, v))
-    #return result
