@@ -156,3 +156,19 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
+
+
+  elasticsearch:
+    container_name: elasticsearch
+    build:
+      context: elasticsearch/
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      # - elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m" # 자바 메모리
+      ELASTIC_PASSWORD: heyapple123
+      discovery.type: single-node
