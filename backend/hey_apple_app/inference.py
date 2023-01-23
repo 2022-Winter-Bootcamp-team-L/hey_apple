@@ -10,7 +10,7 @@ from uuid import uuid4
 def ai_inference(url, folder_name):
     # Model
     model = torch.hub.load('ultralytics/yolov5', 'custom',
-    path="/backend/hey_apple_app/model_file/best.pt", _verbose=False)
+                           path="/backend/hey_apple_app/model_file/best_eng.pt", _verbose=False)
 
     # Images
     image_nparray = np.asarray(
