@@ -31,8 +31,10 @@ class FruitsInfo(APIView):
     @swagger_auto_schema(manual_parameters=[id])
     def get(self, request, id):
         try:
-            data = cache.get_or_set(id, FruitSerializer(
-                fruit.objects.get(id=id)).data)  # timeout 설정 고민
+            data = cache.get(id)
+            if not data:
+                data = FruitSerializer(fruit.objects.get(id=id)).data
+                cache.set(id, data)  # timeout 설정 고민
             return Response(data)
         except fruit.DoesNotExist as e:
             logging.error(f"fruit_id: {id} does not exist")
