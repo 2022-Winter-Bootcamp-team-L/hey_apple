@@ -7,6 +7,7 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse
 
 from .models import image, orderpayment, fruitorder,fruit
+from .serializers import FruitSerializer
 from .utils import s3_connection, s3_put_object, s3_get_image_url
 # from .views import get_order_bill
 from backend.settings import AWS_STORAGE_BUCKET_NAME
@@ -24,13 +25,10 @@ from .inference import ai_inference
 
 
 @app.task
-def ai_task(request):
-    # url = get_order_bill(request)
+def ai_task(request, orderpayment_id):
     uuid_key = str(uuid4())  # 고유한 폴더명
     image_uuid = str(uuid4())  # 입력받은 이미지만의 아이디 생성
 
-    # file = request.FILES['filename']  # 입력받은 이미지
-    # file = request.FILES.get('filename')
     file = request
     default_storage.save('ai_image/' + uuid_key + '/' +
     image_uuid + ".jpg", file)  # 입력 받은 이미지 저장
@@ -52,48 +50,49 @@ def ai_task(request):
         else:
             answer[obj[6]] = 1
 
+    # 하나의 주문에 같이 분석된 이미지들이 공통적으로 가지고 있어야 할 orderpayment가 있는지 확인 후 없다면 생성
+    o_orderpayment, is_o_created = orderpayment.objects.get_or_create(id=orderpayment_id)
+
+    # 분석된 이미지 객체 생성
     i_image = image()
     i_image.id = image_uuid
+    i_image.orderpayment_id = o_orderpayment
     i_image.s3_image_url = s3_url
     i_image.s3_result_image_url = url
     i_image.save()
 
-    o_orderpayment = orderpayment()
-    o_orderpayment.image_id = i_image
-    o_orderpayment.save()
-
-    total_price = 0
-    total_count = 0
+    image_price = 0
     result = {}
     fruit_list = []
 
-    for key in answer:
+    
+    for key in answer: # 이미지 분석 결과 로직,
         f_fruitorder = fruitorder()
-        print('key : ',key)
         temp_fruit = fruit.objects.get(name=key)
-        print('temp_fruit : ',temp_fruit)
         f_fruitorder.fruit_id = temp_fruit
-        f_fruitorder.orderpayment_id = o_orderpayment
+        f_fruitorder.image_id = i_image
         f_fruitorder.count = answer[key]
         f_fruitorder.save()
 
-        f_list = {}
-        f_list[temp_fruit.name] = {'price': temp_fruit.price, 'count': f_fruitorder.count}
+        f_list = {} # 과일 정보
+        serializer = FruitSerializer(temp_fruit)
+        f_list['fruit_info'] = serializer.data
+        f_list['count'] = f_fruitorder.count # 과일 개수
         fruit_list.append(f_list)
         
-        total_price += temp_fruit.price * answer[key]
+        image_price += temp_fruit.price * answer[key]
         
     result['fruit_list'] = fruit_list
-    o_orderpayment.total_price = total_price
-    o_orderpayment.total_count = total_count
+    i_image.image_price = image_price
+
     o_orderpayment.save()
 
+    i_image.save() # 이미지 끝
+
     result['orderpayment_id'] = o_orderpayment.id
-    result["total_price"] = total_price
+    result["image_price"] = image_price
     result["s3_result_image_url"] = url
 
-    
-    # print(result)
     return result
     
 

@@ -21,6 +21,7 @@ from .tasks import mail_task
 import logging
 
 from celery.result import AsyncResult
+from uuid import uuid4
 
 
 class FruitsInfo(APIView):
@@ -46,10 +47,19 @@ class FruitsImage(APIView):
 
     @swagger_auto_schema(manual_parameters=[type])
     def post(self, request):
-        print('filename : ----- ', request.FILES)
-        input_image = request.FILES.get('filename')
-        task_id = ai_task.delay(input_image)
-        return JsonResponse({"task_id": task_id.id})
+        image_list = request.FILES.getlist('filename')
+        task_id_list = []
+        num = 1
+        orderpayment_id = uuid4()
+
+        for image in image_list:
+            
+            task_id = ai_task.delay(image, orderpayment_id)
+            task_id_list.append(task_id.id)
+            num = num+1
+
+        cache.set(orderpayment_id,task_id_list)
+        return JsonResponse({"task_id": orderpayment_id}) 
 
 
 class FruitsPayment(APIView):
@@ -58,12 +68,33 @@ class FruitsPayment(APIView):
 
     @swagger_auto_schema(manual_parameters=[task_id])
     def get(self, request, task_id):
-        task = AsyncResult(task_id)
-        if not task.ready():
-            return JsonResponse({"ai_resutl": "notyet"})
-        print('result : ', task.get('result'))
-        result = task.get('result')
-        return JsonResponse({'result': result})
+
+        result_list = []
+        task_id_list = cache.get(task_id)
+        for task_id in task_id_list:
+            task = AsyncResult(task_id)
+            if not task.ready():
+                return JsonResponse({"ai_resutl" : "notyet"})
+            result_list.append(task.get('result'))
+
+        total_price = 0
+        result_url_list = []
+        fruit_list = {}
+        orderpayment_id = ''
+        for image in result_list:
+            for info in image['fruit_list']:
+                name = info['fruit_info']['name']
+                count = info['count']
+                if not name in fruit_list:
+                    fruit_list[name] = 0
+                fruit_list[name] += int(count)
+            orderpayment_id = image['orderpayment_id']
+            total_price += image['image_price']
+            result_url_list.append(image['s3_result_image_url'])
+
+        return JsonResponse({'fruit_list': fruit_list,'orderpayment_id': orderpayment_id,
+        'total_price': total_price, 'result_url_list': result_url_list})
+
 
 # sendEmail API
 # exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
@@ -79,9 +110,3 @@ class EmailPost(APIView):
     def get(self, request):
         result = mail_task(request)
         return result
-
-# @ api_view(['GET'])
-# def send_email_api(request):
-#     result = mail_task(request)
-
-#     return result
