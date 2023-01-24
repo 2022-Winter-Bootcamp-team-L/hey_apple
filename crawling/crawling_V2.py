@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys # 키보드 입력용
 from selenium.webdriver.common.by import By # find할 타입 지정용
 import time # time.sleep용
+from datetime import datetime
 
 import os
 import pandas as pd # csv파일 생성
@@ -48,31 +49,6 @@ def next_fruit(num):
     main_search_ip.send_keys(Keys.ENTER)
     time.sleep(0.5)
 
-    # main_search_ip = driver.find_element(By.XPATH, # 1. 메인 페이지의 검색창 클릭
-    #     r'//*[@id="content"]/div/div[2]/div[1]/div[2]/div[1]/div[1]/button')
-    # main_search_ip.send_keys(Keys.ENTER)
-    # time.sleep(0.5)
-    # fruit_search_ip = driver.find_element(By.XPATH, # 2. 과일 종류 검색창 클릭
-    #     r'//*[@id="settingTab01"]/div[2]/input')
-    # fruit_search_ip.send_keys(fruit)
-    # fruit_search_ip.send_keys(Keys.ENTER)
-    # time.sleep(0.5)
-
-    # fruit_enter_bt = driver.find_element(By.XPATH, # 3. 과일 종류 검색 버튼 클릭
-    #     r'//*[@id="settingTab01"]/div[2]/button')
-    # fruit_enter_bt.send_keys(Keys.ENTER)
-    # time.sleep(0.5)
-
-    # fruit_item_lb = driver.find_element(By.XPATH, # 4. 과일 종류 선택창에서 품목 라벨 클릭
-    #     r'//*[@id="mCSB_1_container"]/ul/li')
-    # lb = fruit_item_lb.find_element(By.TAG_NAME,'label')
-    # driver.execute_script('arguments[0].click();',lb) #얘는 왠지 .click 동작 안함, script로 강제 실행
-    # time.sleep(0.5)    
-
-    # fruit_save_bt = driver.find_element(By.XPATH, # 5. 저장 버튼 클릭
-    #     r'//*[@id="settingArea"]/ul/li[2]/button')
-    # fruit_save_bt.send_keys(Keys.ENTER)
-    # time.sleep(0.5)
 
 
 def get_info(num):
@@ -92,16 +68,16 @@ def get_info(num):
             r'//*[@id="content"]/div/div[2]/div/div[2]/div[1]/div[3]/ul/li[3]/p[1]').text
         
     fruit_price = int(rm_name.split('원')[0].replace(',',''))
-    result = round(round(fruit_price / weight_to_count[num]),-2)
-    print('fruit_price : ',fruit_price, ' count : ',weight_to_count[num], ' ',fruit,' : ',result)
+    result_price = round(round(fruit_price / weight_to_count[num]),-2)
+    print('fruit_price : ',fruit_price, ' count : ',weight_to_count[num], ' ',fruit,' : ',result_price)
 
-    # frame = pd.DataFrame([fruit_data])
-    # csv = 'DB_FRUITS.csv'
-    # if not os.path.exists(csv): # 파일 생성 로직
-    #     frame.to_csv(csv, index=False, mode='w', encoding='utf-8-sig')
-    # else:
-    #     frame.to_csv(csv, index=False, mode='a', encoding='utf-8-sig', header=False)
-    # time.sleep(3)
+    today = datetime.now().strftime('%Y-%m-%d')
+    data_to_csv = {}
+    data_to_csv['name'] = fruit
+    data_to_csv['avg_price'] = result_price
+
+
+    
 
 
     # fruit_name = driver.find_element(By.XPATH, # 과일 이름 가져오기
