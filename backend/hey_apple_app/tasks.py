@@ -143,46 +143,38 @@ def mail_task(request):
 
     # dbconnect Start
     def dbcon(email, orderpaymentid, emailcheckFlag):
-        if emailcheckFlag == 1:
-            orderpaymentid = orderpaymentid
+        if emailcheckFlag == 1:             
             result_total_price = orderpayment.objects.filter(id = orderpaymentid).filter(is_deleted = 0).values('total_price')
             res = result_total_price[0]
             total_price = res['total_price']
-            print(total_price)
             content_img_price = ""
             content_fruit = ""
             result_img = image.objects.filter(orderpayment_id = orderpaymentid).filter(is_deleted = 0).values('id' , "image_price")
-            print(result_img)
             flag =0
             for i in result_img :
                 res = result_img[flag]
                 img_id = res['id']
                 img_price = res['image_price']
-                content_img_price += str(img_id) +"   "+str(img_price)+"\n"
+                content_img_price += str(img_id) +","+str(img_price)+"\n"
 
                 result_fruitorder = fruitorder.objects.filter(image_id = img_id).filter(is_deleted = 0).values('fruit_id',"count")
-                print(result_fruitorder)
                 flag2 =0
-                print("과일 정보가져오기 start")
+
                 for j in result_fruitorder:
                     res= result_fruitorder[flag2]
                     fruit_id = res['fruit_id']
                     result_fruit = fruit.objects.filter(id = fruit_id).filter(is_deleted = 0).values("name" , "price")
-                    print("result_fruit",result_fruit)
-                    
-                    
+                    fruit_info = result_fruit[0]
+                    fruit_name =  fruit_info['name']
+                    fruit_price = fruit_info['price']
                     fruit_count = res['count']
-                    content_fruit += str(fruit_count)  
+                    content_fruit += str(fruit_name)+","+str(fruit_price)+","+str(fruit_count)+"\n"  
                     flag2 +=1 
                 flag +=1
-                print("내부",img_id , img_price)
-            
-            print(content_img_price)
-            print(content_fruit)
 
             emailcheckFlag = 1
             emailcheckFlag = send_mail(
-                email, saveInfo, totalPrice, emailcheckFlag)  # 1
+                email, content_img_price, content_fruit,total_price, emailcheckFlag)  # 1
             return emailcheckFlag
         else:
             emailcheckFlag = 3
@@ -191,18 +183,13 @@ def mail_task(request):
     # dbconnect End
 
     # mail Send Start
-    def send_mail(email, saveInfo, totalPrice, emailcheckFlag):
+    def send_mail(email, content_img_price, content_fruit,total_price,emailcheckFlag):
         if emailcheckFlag == 1:
             try:  # context 생성 .. 이메일 본문 생성
-                #context = ""
-                context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
-                for i in range(len(saveInfo)):
-                    for j in range(len(saveInfo[i])):  # name , price , count
-                        contea = saveInfo[i][j]
-                        context = context + " "+str(contea)
-                    context += "\n"
-                context = context + "\n 총가격 : " + \
-                    str(totalPrice) + "\n http://3.39.167.173" # 나중에 도메인 사면 수정할 것
+                print("이미지 : \n" , content_img_price , "과일정보 : \n", content_fruit , "총가격 : ", total_price)
+                content = subject+"님 hey, Apple 이용에 감사드립니다."
+                content +="이미지별 각 가격입니다. \n"+ content_img_price +"\n"+"과일정보 입니다. \n"+content_fruit+"\n\n"+"총가격입니다.\n"
+                content +="URL"
             except:
                 emailcheckFlag = 4
                 return emailcheckFlag
@@ -213,7 +200,7 @@ def mail_task(request):
                 GOGLE_EMAIL = get_secret("GOGLE_EMAIL")
                 smtp.login(GOGLE_EMAIL, GOGLE_MAIL_KEY)
 
-                msg = MIMEText(context)
+                msg = MIMEText(content)
                 msg['Subject'] = subject + "님 감사드립니다."
                 msg['From'] = "hey,Apple"
                 msg['To'] = email
