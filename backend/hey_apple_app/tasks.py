@@ -158,7 +158,12 @@ def mail_task(request):
                 cursor.execute(query)
                 result = cursor.fetchone()
                 totalPrice = result[0]
-
+                
+                query_img = "select id from image where orderpayment_id="+orderpaymentid
+                cursor.execute(query_img)
+                result = cursor.fetchone()
+                print(type(result))
+                
                 query2 = "select Distinct fruit_id , count from fruitorder where orderpayment_id ="+orderpaymentid
                 cursor.execute(query2)
                 result = cursor.fetchall()
