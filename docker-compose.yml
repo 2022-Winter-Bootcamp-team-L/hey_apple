@@ -28,11 +28,18 @@ services:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
+    # command: >
+    #   sh -c "python wait_for_mysql.py &&
+    #           python manage.py makemigrations hey_apple_app &&
+    #           python manage.py migrate hey_apple_app &&
+    #           gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+
     command: >
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
-              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+              python manage.py runserver 0.0.0.0:8000"
+
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
