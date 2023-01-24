@@ -1,0 +1,48 @@
+{
+    "mappings": {
+        "properties": {
+            "Name": {
+                "type": "text"
+            },
+            "AVG": {
+                "type": "integer"
+            },
+            "Price1": {
+                "type": "integer"
+            },
+            "Date1": {
+                "type": "text"
+            },
+            "Price2": {
+                "type": "integer"
+            },
+            "Date2": {
+                "type": "text"
+            },
+            "Price3": {
+                "type": "integer"
+            },
+            "Date3": {
+                "type": "text"
+            },
+            "Price4": {
+                "type": "integer"
+            },
+            "Date4": {
+                "type": "text"
+            },
+            "Price5": {
+                "type": "integer"
+            },
+            "Date5": {
+                "type": "text"
+            },
+            "Price6": {
+                "type": "integer"
+            },
+            "Date6": {
+                "type": "text"
+            }
+        }
+    }
+}

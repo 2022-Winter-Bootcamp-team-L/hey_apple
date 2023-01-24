@@ -16,6 +16,7 @@ redis
 drf_yasg
 
 pymysql
+pymongo
 # 이미지 업로드 관련 패키지
 boto3 # s3 버킷 연결용
 pillow # 이미지
@@ -69,5 +70,6 @@ seaborn>=0.11.0
 # # roboflow
 # # ultralytics  # HUB https://hub.ultralytics.com
 
-elasticsearch==8.0.0
-elastic-transport == 8.0.0
+# elasticsearch==8.0.0
+# elastic-transport == 8.0.0
+acryl-datahub[datahub-rest,elasticsearch]==0.8.27.1

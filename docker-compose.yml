@@ -32,7 +32,15 @@ services:
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
-              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+              gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --noreload"
+
+    # command: >
+    #   sh -c "python wait_for_mysql.py &&
+    #           python manage.py makemigrations hey_apple_app &&
+    #           python manage.py migrate hey_apple_app &&
+    #           python bulk.py &&
+    #           gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
@@ -43,119 +51,119 @@ services:
     depends_on:
       - db
 
-  redis:
-    image: redis:latest
-    command: redis-server --port 6379
-    container_name: "redis_server"
-    environment:
-      - REDIS_PASSWORD=1234
-      - REDIS_HOST=redis
-    labels:
-      - "name=redis"
-      - "mode=standalone"
-    volumes:
-      - ./backend/redis:/redis
-    ports:
-      - 6379:6379
+  # redis:
+  #   image: redis:latest
+  #   command: redis-server --port 6379
+  #   container_name: "redis_server"
+  #   environment:
+  #     - REDIS_PASSWORD=1234
+  #     - REDIS_HOST=redis
+  #   labels:
+  #     - "name=redis"
+  #     - "mode=standalone"
+  #   volumes:
+  #     - ./backend/redis:/redis
+  #   ports:
+  #     - 6379:6379
 
-  crawling:
-    build: ./crawling
-    shm_size: 2gb
-    user: root
+  # crawling:
+  #   build: ./crawling
+  #   shm_size: 2gb
+  #   user: root
 
-    command: >
-      sh -c "python3 fruits_crawling.py &&
-              python3 pymongo_tut.py"
+  #   command: >
+  #     sh -c "python3 fruits_crawling.py &&
+  #             python3 pymongo_tut.py"
 
-    # command: >
-    #   sh -c "python3 pymongo_tut.py"
+  #   # command: >
+  #   #   sh -c "python3 pymongo_tut.py"
 
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-    tty: true
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #   tty: true
 
-  nginx:
-    container_name: nginx
-    build:
-      context: "./nginx"
-    ports:
-      - 80:80 # [호스트 포트]:[컨테이너 포트]
-    # volumes:
-    #   - 프론트파일
-    depends_on:
-      - backend
+  # nginx:
+  #   container_name: nginx
+  #   build:
+  #     context: "./nginx"
+  #   ports:
+  #     - 80:80 # [호스트 포트]:[컨테이너 포트]
+  #   # volumes:
+  #   #   - 프론트파일
+  #   depends_on:
+  #     - backend
 
-  celery_worker:
-    container_name: celery_worker
-    build:
-      context: ./backend
-    volumes:
-      - ./backend:/backend
-    ports: []
-    depends_on:
-      - rabbitmq
-      - backend
-    environment:
-      - C_FORCE_ROOT=true
-    command: sh -c "celery -A backend worker --loglevel=info"
+  # celery_worker:
+  #   container_name: celery_worker
+  #   build:
+  #     context: ./backend
+  #   volumes:
+  #     - ./backend:/backend
+  #   ports: []
+  #   depends_on:
+  #     - rabbitmq
+  #     - backend
+  #   environment:
+  #     - C_FORCE_ROOT=true
+  #   command: sh -c "celery -A backend worker --loglevel=info"
 
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3-management-alpine
-    environment:
-      - RABBITMQ_USER=admin
-      - RABBITMQ_PASSWORD=admin
-    ports:
-      - "5672:5672" # Default Port
-      - "15672:15672" # UI Port
-    expose:
-      - "15672"
+  # rabbitmq:
+  #   container_name: rabbitmq
+  #   image: rabbitmq:3-management-alpine
+  #   environment:
+  #     - RABBITMQ_USER=admin
+  #     - RABBITMQ_PASSWORD=admin
+  #   ports:
+  #     - "5672:5672" # Default Port
+  #     - "15672:15672" # UI Port
+  #   expose:
+  #     - "15672"
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - 9090:9090
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-      - cadvisor
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node_exporter
-    restart: unless-stopped
-    expose:
-      - 9100
-    ports:
-      - 9100:9100
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.0
-    container_name: cadvisor
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    privileged: true
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: unless-stopped
-    links:
-      - prometheus:prometheus
-    ports:
-      - 3000:3000
-    volumes:
-      - ./data/grafana:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=myadmin
-      - GF_USERS_ALLOW_SIGN_UP=false
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - 9090:9090
+  #   command:
+  #     - --config.file=/etc/prometheus/prometheus.yml
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #   depends_on:
+  #     - cadvisor
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: node_exporter
+  #   restart: unless-stopped
+  #   expose:
+  #     - 9100
+  #   ports:
+  #     - 9100:9100
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.47.0
+  #   container_name: cadvisor
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #   privileged: true
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   restart: unless-stopped
+  #   links:
+  #     - prometheus:prometheus
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./data/grafana:/var/lib/grafana
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=myadmin
+  #     - GF_USERS_ALLOW_SIGN_UP=false
 
 
   elasticsearch:
