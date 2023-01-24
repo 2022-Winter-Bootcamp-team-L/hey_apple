@@ -144,52 +144,41 @@ def mail_task(request):
     # dbconnect Start
     def dbcon(email, orderpaymentid, emailcheckFlag):
         if emailcheckFlag == 1:
-            email = email
-            global saveInfo
-            try:  # connect
-                db = pymysql.Connect(host='db', user="root",
-                password="1234", database="mysql-db")
-                cursor = db.cursor()
-            except:
-                emailcheckFlag = 3
-                return emailcheckFlag
-            try:  # query serch
-                query = "select total_price from orderpayment where id ="+orderpaymentid
-                cursor.execute(query)
-                result = cursor.fetchone()
-                totalPrice = result[0]
-                
-                query_img = "select id from image where orderpayment_id="+orderpaymentid
-                cursor.execute(query_img)
-                result = cursor.fetchone()
-                print(type(result))
-                
-                query2 = "select Distinct fruit_id , count from fruitorder where orderpayment_id ="+orderpaymentid
-                cursor.execute(query2)
-                result = cursor.fetchall()
-                saveInfo = [[0 for col in range(3)] for row in range(
-                    len(result))]  # col 열 row 행
+            orderpaymentid = orderpaymentid
+            result_total_price = orderpayment.objects.filter(id = orderpaymentid).filter(is_deleted = 0).values('total_price')
+            res = result_total_price[0]
+            total_price = res['total_price']
+            print(total_price)
+            content_img_price = ""
+            content_fruit = ""
+            result_img = image.objects.filter(orderpayment_id = orderpaymentid).filter(is_deleted = 0).values('id' , "image_price")
+            print(result_img)
+            flag =0
+            for i in result_img :
+                res = result_img[flag]
+                img_id = res['id']
+                img_price = res['image_price']
+                content_img_price += str(img_id) +"   "+str(img_price)+"\n"
 
-                flag = 0
-
-                for i, k in result:
-                    count = k
-                    # Fruit name , price 조회 start
-                    query3 = "select name , price from fruit where id ="+str(i)
-                    cursor.execute(query3)
-                    results = cursor.fetchall()
-                    saveInfo[flag][2] = count
-
-                    for i, j in results:
-                        name = i
-                        price = j
-                        saveInfo[flag][0] = name
-                        saveInfo[flag][1] = price
-                        flag += 1
-                    # Fruit name , price 조회 end
-            except:
-                emailcheckFlag = 3
-                return emailcheckFlag
+                result_fruitorder = fruitorder.objects.filter(image_id = img_id).filter(is_deleted = 0).values('fruit_id',"count")
+                print(result_fruitorder)
+                flag2 =0
+                print("과일 정보가져오기 start")
+                for j in result_fruitorder:
+                    res= result_fruitorder[flag2]
+                    fruit_id = res['fruit_id']
+                    result_fruit = fruit.objects.filter(id = fruit_id).filter(is_deleted = 0).values("name" , "price")
+                    print("result_fruit",result_fruit)
+                    
+                    
+                    fruit_count = res['count']
+                    content_fruit += str(fruit_count)  
+                    flag2 +=1 
+                flag +=1
+                print("내부",img_id , img_price)
+            
+            print(content_img_price)
+            print(content_fruit)
 
             emailcheckFlag = 1
             emailcheckFlag = send_mail(
