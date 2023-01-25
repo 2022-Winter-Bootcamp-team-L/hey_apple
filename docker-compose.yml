@@ -1,7 +1,8 @@
 version: "3"
 
 volumes:
-  prometheus_data: {}
+    prometheus_data: {}
+    grafana_data: {}
 
 services:
   db:
@@ -163,3 +164,13 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
