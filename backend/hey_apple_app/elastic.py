@@ -8,8 +8,8 @@ import pandas as pd
 import json
 from pathlib import Path
 
-# Get mongoDB data
 
+# Get mongoDB data
 
 class My_MongoDB():
     def __init__(self):
@@ -66,12 +66,12 @@ def es_import():
     print("heyapple", data)
     elastic.Insert("heyapple", data)
     print("제발", end="제발")
-    data = {"date1": "01.19(목)"}
+    data = {"name": "Apple"}
     pprint.pprint(elastic.Search("heyapple", data))
 
 
 def elastic_check():
-    # # elastic search connect
+    # elastic search connect
     elastic = My_Elasticsearch()
 
     # check elasitc connect
