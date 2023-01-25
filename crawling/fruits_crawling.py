@@ -117,7 +117,9 @@ def next_fruit(num):
     time.sleep(0.5)
 
 def check_file():
-    file = '/backend/crawling/DB_FRUITS.csv'
+    file = './DB_FRUITS.csv'
+    print('check_file')
+    print(os.path.isfile(file))
     if os.path.isfile(file):
         os.remove(file)
         print('이미 DB_FRUITS.csv파일이 있어 기존 파일을 삭제했습니다.')

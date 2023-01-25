@@ -32,8 +32,9 @@ except Exception:
 def insert_mongo(): #파일을 읽어 mongodb에 데이터 추가
     # today = datetime.now().strftime('%Y-%m-%d')
     db = mongo_client['heyapple']
-    collection = db['fruits_data']
+    db.fruits_data.drop()
 
+    collection = db['fruits_data']
     file = pd.read_csv("DB_FRUITS.csv", encoding="utf-8")
     print('csv파일 분석')
     collection.insert_many(file.to_dict('records'))
