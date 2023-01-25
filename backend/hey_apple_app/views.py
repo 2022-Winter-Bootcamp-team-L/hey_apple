@@ -45,7 +45,7 @@ class FruitsImage(APIView):
     parser_classes = [MultiPartParser]
 
     type = openapi.Parameter('filename', openapi.IN_FORM,
-                             type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
+                            type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
 
     @swagger_auto_schema(manual_parameters=[type])
     def post(self, request):
