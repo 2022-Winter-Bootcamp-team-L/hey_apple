@@ -1,48 +1,48 @@
 {
-    "mappings": {
-        "properties": {
-            "Name": {
-                "type": "text"
-            },
-            "AVG": {
-                "type": "integer"
-            },
-            "Price1": {
-                "type": "integer"
-            },
-            "Date1": {
-                "type": "text"
-            },
-            "Price2": {
-                "type": "integer"
-            },
-            "Date2": {
-                "type": "text"
-            },
-            "Price3": {
-                "type": "integer"
-            },
-            "Date3": {
-                "type": "text"
-            },
-            "Price4": {
-                "type": "integer"
-            },
-            "Date4": {
-                "type": "text"
-            },
-            "Price5": {
-                "type": "integer"
-            },
-            "Date5": {
-                "type": "text"
-            },
-            "Price6": {
-                "type": "integer"
-            },
-            "Date6": {
-                "type": "text"
-            }
-        }
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text"
+      },
+      "avg": {
+        "type": "long"
+      },
+      "price1": {
+        "type": "long"
+      },
+      "date1": {
+        "type": "text"
+      },
+      "price2": {
+        "type": "long"
+      },
+      "date2": {
+        "type": "text"
+      },
+      "price3": {
+        "type": "long"
+      },
+      "date3": {
+        "type": "text"
+      },
+      "price4": {
+        "type": "long"
+      },
+      "date4": {
+        "type": "text"
+      },
+      "price5": {
+        "type": "long"
+      },
+      "date5": {
+        "type": "text"
+      },
+      "price6": {
+        "type": "long"
+      },
+      "date6": {
+        "type": "text"
+      }
     }
+  }
 }

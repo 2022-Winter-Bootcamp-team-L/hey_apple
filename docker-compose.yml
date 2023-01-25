@@ -32,7 +32,8 @@ services:
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
-              gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --noreload"
+              python hey_apple_app/elastic.py &&
+              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
 
     # command: >
     #   sh -c "python wait_for_mysql.py &&
@@ -165,7 +166,6 @@ services:
   #     - GF_SECURITY_ADMIN_PASSWORD=myadmin
   #     - GF_USERS_ALLOW_SIGN_UP=false
 
-
   elasticsearch:
     container_name: elasticsearch
     build:
@@ -179,4 +179,4 @@ services:
     environment:
       ES_JAVA_OPTS: "-Xmx512m -Xms512m" # 자바 메모리
       ELASTIC_PASSWORD: heyapple123
-      discovery.type: single-node
+      # discovery.type: single-node
