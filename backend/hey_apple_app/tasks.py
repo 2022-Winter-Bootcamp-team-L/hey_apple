@@ -85,6 +85,9 @@ def ai_task(request, orderpayment_id):
     result['fruit_list'] = fruit_list
     i_image.image_price = image_price
 
+    if is_o_created:
+        o_orderpayment.total_price = 0
+    o_orderpayment.total_price += image_price
     o_orderpayment.save()
 
     i_image.save() # 이미지 끝
