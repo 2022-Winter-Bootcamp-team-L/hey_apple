@@ -166,9 +166,10 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
   alertmanager:
+    container_name: alertmanager
     image: prom/alertmanager
     ports:
-      - 9093:9093
+      - "9093:9093"
     volumes:
       - ./alertmanager/:/etc/alertmanager/
     restart: always

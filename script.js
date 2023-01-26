@@ -1,26 +1,38 @@
+//POST
 // import http from 'k6/http';
-// import { sleep } from 'k6';
-
-// export const options = {
-//   vus: 10,
-//   duration: '10s',
-// };
 
 // export default function () {
-//   http.get('https://test.k6.io');
-//   sleep(1);
+//   const url = 'http://';
+//   const payload = JSON.stringify({
+//     email: '1106q@naver.com',
+//     password: 'bbb',
+//   });
+
+//   const params = {
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   };
+
+//   http.post(url, payload, params);
 // }
 
-import http from 'k6/http';
-import {sleep} from 'k6';
+//GET ..email TEST
+// import http from 'k6/http';
 
-export const options = {
-    vus: 10,
-    duration: '10s',
-  };
+// export default function () {
+//     let email = "1106q@naver.com"
+//     for (let id = 1; id <= 4; id++) {
+//         http.get(`http://localhost:8000/api/v1/bills?email=${email}&orderpayment_id=${id}`);
+//     }
+// }
 
-export default function () {
+//GET ..fruit TEST
+// import http from 'k6/http';
 
-    http.get(`http://localhost/api/v1/orders/tasks`);
-    sleep(1); // sleep while a second
-}
+// export default function () {
+//     for (let id = 1; id <= 4; id++) {
+//         http.get(`http://localhost:8000/api/v1/fruits/${id}`);
+//     }
+// }
+
