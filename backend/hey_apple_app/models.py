@@ -19,7 +19,7 @@ class fruit(models.Model):
     calorie = models.IntegerField(null=False)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
-    is_deleted = models.IntegerField(null=False, default=1)
+    is_deleted = models.IntegerField(null=False, default=0)
 
     class Meta:
         db_table = 'fruit'
@@ -44,7 +44,7 @@ class orderpayment(models.Model):
     total_price = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
-    is_deleted = models.IntegerField(null=False, default=1)
+    is_deleted = models.IntegerField(null=False, default=0)
 
     class Meta:
         db_table = 'orderpayment'
@@ -57,7 +57,7 @@ class fruitorder(models.Model):
     count = models.IntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now, null=False)
     updated_at = models.DateTimeField(default=timezone.now, null=False)
-    is_deleted = models.IntegerField(null=False, default=1)
+    is_deleted = models.IntegerField(null=False, default=0)
 
     class Meta:
         db_table = 'fruitorder'
