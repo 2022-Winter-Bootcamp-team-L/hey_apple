@@ -7,6 +7,7 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse
 
 from .models import image, orderpayment, fruitorder,fruit
+from .serializers import FruitSerializer
 from .utils import s3_connection, s3_put_object, s3_get_image_url
 # from .views import get_order_bill
 from backend.settings import AWS_STORAGE_BUCKET_NAME
@@ -24,13 +25,10 @@ from .inference import ai_inference
 
 
 @app.task
-def ai_task(request):
-    # url = get_order_bill(request)
+def ai_task(request, orderpayment_id):
     uuid_key = str(uuid4())  # 고유한 폴더명
     image_uuid = str(uuid4())  # 입력받은 이미지만의 아이디 생성
 
-    # file = request.FILES['filename']  # 입력받은 이미지
-    # file = request.FILES.get('filename')
     file = request
     default_storage.save('ai_image/' + uuid_key + '/' +
     image_uuid + ".jpg", file)  # 입력 받은 이미지 저장
@@ -52,47 +50,49 @@ def ai_task(request):
         else:
             answer[obj[6]] = 1
 
+    # 하나의 주문에 같이 분석된 이미지들이 공통적으로 가지고 있어야 할 orderpayment가 있는지 확인 후 없다면 생성
+    o_orderpayment, is_o_created = orderpayment.objects.get_or_create(id=orderpayment_id)
+
+    # 분석된 이미지 객체 생성
     i_image = image()
     i_image.id = image_uuid
+    i_image.orderpayment_id = o_orderpayment
     i_image.s3_image_url = s3_url
     i_image.s3_result_image_url = url
     i_image.save()
 
-    o_orderpayment = orderpayment()
-    o_orderpayment.image_id = i_image
-    o_orderpayment.save()
-
-    total_price = 0
-    total_count = 0
+    image_price = 0
     result = {}
     fruit_list = []
 
-    for key in answer:
+    
+    for key in answer: # 이미지 분석 결과 로직,
         f_fruitorder = fruitorder()
-        print('key : ',key)
         temp_fruit = fruit.objects.get(name=key)
-        print('temp_fruit : ',temp_fruit)
         f_fruitorder.fruit_id = temp_fruit
-        f_fruitorder.orderpayment_id = o_orderpayment
+        f_fruitorder.image_id = i_image
         f_fruitorder.count = answer[key]
         f_fruitorder.save()
 
-        f_list = {}
-        f_list[temp_fruit.name] = {'price': temp_fruit.price, 'count': f_fruitorder.count}
+        f_list = {} # 과일 정보
+        serializer = FruitSerializer(temp_fruit)
+        f_list['fruit_info'] = serializer.data
+        f_list['count'] = f_fruitorder.count # 과일 개수
         fruit_list.append(f_list)
         
-        total_price += temp_fruit.price * answer[key]
+        image_price += temp_fruit.price * answer[key]
         
     result['fruit_list'] = fruit_list
-    o_orderpayment.total_price = total_price
-    o_orderpayment.total_count = total_count
+    i_image.image_price = image_price
+
     o_orderpayment.save()
 
-    result["total_price"] = total_price
+    i_image.save() # 이미지 끝
+
+    result['orderpayment_id'] = o_orderpayment.id
+    result["image_price"] = image_price
     result["s3_result_image_url"] = url
 
-    
-    # print(result)
     return result
     
 
@@ -143,52 +143,38 @@ def mail_task(request):
 
     # dbconnect Start
     def dbcon(email, orderpaymentid, emailcheckFlag):
-        if emailcheckFlag == 1:
-            email = email
-            global saveInfo
-            try:  # connect
-                db = pymysql.Connect(host='db', user="root",
-                password="1234", database="mysql-db")
-                cursor = db.cursor()
-            except:
-                emailcheckFlag = 3
-                return emailcheckFlag
-            try:  # query serch
-                query = "select total_price from orderpayment where id ="+orderpaymentid
-                cursor.execute(query)
-                result = cursor.fetchone()
-                totalPrice = result[0]
+        if emailcheckFlag == 1:             
+            result_total_price = orderpayment.objects.filter(id = orderpaymentid).filter(is_deleted = 0).values('total_price')
+            res = result_total_price[0]
+            total_price = res['total_price']
+            content_img_price = ""
+            content_fruit = ""
+            result_img = image.objects.filter(orderpayment_id = orderpaymentid).filter(is_deleted = 0).values('id' , "image_price")
+            flag =0
+            for i in result_img :
+                res = result_img[flag]
+                img_id = res['id']
+                img_price = res['image_price']
+                content_img_price += str(img_id) +","+str(img_price)+"\n"
 
-                query2 = "select Distinct fruit_id , count from fruitorder where orderpayment_id ="+orderpaymentid
-                cursor.execute(query2)
-                result = cursor.fetchall()
-                saveInfo = [[0 for col in range(3)] for row in range(
-                    len(result))]  # col 열 row 행
+                result_fruitorder = fruitorder.objects.filter(image_id = img_id).filter(is_deleted = 0).values('fruit_id',"count")
+                flag2 =0
 
-                flag = 0
-
-                for i, k in result:
-                    count = k
-                    # Fruit name , price 조회 start
-                    query3 = "select name , price from fruit where id ="+str(i)
-                    cursor.execute(query3)
-                    results = cursor.fetchall()
-                    saveInfo[flag][2] = count
-
-                    for i, j in results:
-                        name = i
-                        price = j
-                        saveInfo[flag][0] = name
-                        saveInfo[flag][1] = price
-                        flag += 1
-                    # Fruit name , price 조회 end
-            except:
-                emailcheckFlag = 3
-                return emailcheckFlag
+                for j in result_fruitorder:
+                    res= result_fruitorder[flag2]
+                    fruit_id = res['fruit_id']
+                    result_fruit = fruit.objects.filter(id = fruit_id).filter(is_deleted = 0).values("name" , "price")
+                    fruit_info = result_fruit[0]
+                    fruit_name =  fruit_info['name']
+                    fruit_price = fruit_info['price']
+                    fruit_count = res['count']
+                    content_fruit += str(fruit_name)+","+str(fruit_price)+","+str(fruit_count)+"\n"  
+                    flag2 +=1 
+                flag +=1
 
             emailcheckFlag = 1
             emailcheckFlag = send_mail(
-                email, saveInfo, totalPrice, emailcheckFlag)  # 1
+                email, content_img_price, content_fruit,total_price, emailcheckFlag)  # 1
             return emailcheckFlag
         else:
             emailcheckFlag = 3
@@ -197,18 +183,13 @@ def mail_task(request):
     # dbconnect End
 
     # mail Send Start
-    def send_mail(email, saveInfo, totalPrice, emailcheckFlag):
+    def send_mail(email, content_img_price, content_fruit,total_price,emailcheckFlag):
         if emailcheckFlag == 1:
             try:  # context 생성 .. 이메일 본문 생성
-                context = ""
-                # context = "   Hey Apple 사용에 감사드립니다. " + subject +"님"+ "\n\n\n"
-                for i in range(len(saveInfo)):
-                    for j in range(len(saveInfo[i])):  # name , price , count
-                        contea = saveInfo[i][j]
-                        context = context + " "+str(contea)
-                    context += "\n"
-                context = context + "\n 총가격 : " + \
-                    str(totalPrice) + "\n url 넣을 공간"
+                print("이미지 : \n" , content_img_price , "과일정보 : \n", content_fruit , "총가격 : ", total_price)
+                content = subject+"님 hey, Apple 이용에 감사드립니다."
+                content +="이미지별 각 가격입니다. \n"+ content_img_price +"\n"+"과일정보 입니다. \n"+content_fruit+"\n\n"+"총가격입니다.\n"
+                content +="URL"
             except:
                 emailcheckFlag = 4
                 return emailcheckFlag
@@ -219,7 +200,7 @@ def mail_task(request):
                 GOGLE_EMAIL = get_secret("GOGLE_EMAIL")
                 smtp.login(GOGLE_EMAIL, GOGLE_MAIL_KEY)
 
-                msg = MIMEText(context)
+                msg = MIMEText(content)
                 msg['Subject'] = subject + "님 감사드립니다."
                 msg['From'] = "hey,Apple"
                 msg['To'] = email

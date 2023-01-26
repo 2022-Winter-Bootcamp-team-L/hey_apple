@@ -1,80 +1,114 @@
 import logging
-from rest_framework import viewsets
+from rest_framework.views import APIView, exceptions
+from rest_framework.parsers import MultiPartParser
 from rest_framework.decorators import api_view  # @api_view 사용 가능
 from rest_framework.response import Response
 
-# from django.core.files.storage import FileSystemStorage #file(image) 관리
-from django.core.files.storage import default_storage  # file 저장
 from django.http import JsonResponse  # json형으로 반환
 from django.core.cache import cache
 
 from drf_yasg.utils import swagger_auto_schema  # swagger 적용
+from drf_yasg import openapi
 
-# from backend.custom_exceptions import * #커스텀 오류 관리용
-from rest_framework import exceptions  # 오류 관리용
-
-from .models import image, fruit
+from .models import fruit
 from .utils import *
 from .serializers import FruitSerializer
 
 from .tasks import ai_task
-from PIL import Image
-import io
 
 # mail API
 from .tasks import mail_task
 import logging
 
 from celery.result import AsyncResult
+from uuid import uuid4
 
 
-@api_view(['GET'])
-def get_fruit(request, id):
-    # data = cache.get(id)
-    # if data is None:
-    #     data = fruit.objects.get(id=id)
-    #     serializer = FruitSerializer(data)
-    #     cache.set(id, serializer.data)
-    #     print("get mysql")
-    #     return Response(serializer.data)
-    # print("get redis")
-    try:
-        obj = fruit.objects.get(id=id)
-        serializer = FruitSerializer(obj)
-        data = cache.get_or_set(id, serializer.data)  # timeout 설정 고민
-        return Response(data)
-    except fruit.DoesNotExist as e:
-        logging.error(f"fruit_id: {id} does not exist")
+class FruitsInfo(APIView):
+    id = openapi.Parameter(
+        'id', openapi.IN_PATH, type=openapi.TYPE_INTEGER, description='원하는 과일 id를 입력하세요.')
+
+    @swagger_auto_schema(manual_parameters=[id])
+    def get(self, request, id):
+        try:
+            data = cache.get(id)
+            if not data:
+                data = FruitSerializer(fruit.objects.get(id=id)).data
+                cache.set(id, data)  # timeout 설정 고민
+            return Response(data)
+        except fruit.DoesNotExist as e:
+            logging.error(f"fruit_id: {id} does not exist")
         return JsonResponse({"error": "error_page"})
 
 
-@api_view(['POST'])
-def get_task_id(request):
-    input_image = request.FILES.get('filename')
-    task_id = ai_task.delay(input_image)
-    return JsonResponse({"task_id": task_id.id})
+class FruitsImage(APIView):
+    parser_classes = [MultiPartParser]
+
+    type = openapi.Parameter('filename', openapi.IN_FORM,
+                             type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
+
+    @swagger_auto_schema(manual_parameters=[type])
+    def post(self, request):
+        image_list = request.FILES.getlist('filename')
+        task_id_list = []
+        num = 1
+        orderpayment_id = uuid4()
+
+        for image in image_list:
+            
+            task_id = ai_task.delay(image, orderpayment_id)
+            task_id_list.append(task_id.id)
+            num = num+1
+
+        cache.set(orderpayment_id,task_id_list)
+        return JsonResponse({"task_id": orderpayment_id}) 
 
 
-@api_view(['GET'])
-def response_result(request, task_id):
-    task = AsyncResult(task_id)
-    # print('task : ',task.get('result'))
-    if not task.ready():
-        return JsonResponse({"ai_resutl" : "notyet"})
-    print('result : ', task.get('result'))
-    result = task.get('result')
-    return JsonResponse({'result' : result})
+class FruitsPayment(APIView):
+    task_id = openapi.Parameter(
+        'task_id', openapi.IN_PATH, type=openapi.TYPE_STRING, description='task_id를 입력하세요.')
+
+    @swagger_auto_schema(manual_parameters=[task_id])
+    def get(self, request, task_id):
+
+        result_list = []
+        task_id_list = cache.get(task_id)
+        for task_id in task_id_list:
+            task = AsyncResult(task_id)
+            if not task.ready():
+                return JsonResponse({"ai_resutl" : "notyet"})
+            result_list.append(task.get('result'))
+
+        total_price = 0
+        result_url_list = []
+        fruit_list = {}
+        orderpayment_id = ''
+        for image in result_list:
+            for info in image['fruit_list']:
+                name = info['fruit_info']['name']
+                count = info['count']
+                if not name in fruit_list:
+                    fruit_list[name] = 0
+                fruit_list[name] += int(count)
+            orderpayment_id = image['orderpayment_id']
+            total_price += image['image_price']
+            result_url_list.append(image['s3_result_image_url'])
+
+        return JsonResponse({'fruit_list': fruit_list,'orderpayment_id': orderpayment_id,
+        'total_price': total_price, 'result_url_list': result_url_list})
 
 
-
-    # return JsonResponse(data)
 # sendEmail API
-
 # exJson = '{"email" : "1106q@naver.com" , "orderbillid" : "2"}'
 
 
-@api_view(['GET'])
-def send_email_api(request):
-    result = mail_task(request)
+class EmailPost(APIView):
+    email = openapi.Parameter(
+        'email', openapi.IN_QUERY, type=openapi.TYPE_STRING, description='email를 입력하세요.')
+    orderpayment_id = openapi.Parameter(
+        'orderpayment_id', openapi.IN_QUERY, type=openapi.TYPE_STRING, description='orderpayment_id를 입력하세요.')
 
-    return result
+    @swagger_auto_schema(manual_parameters=[email, orderpayment_id])
+    def get(self, request):
+        result = mail_task(request)
+        return result

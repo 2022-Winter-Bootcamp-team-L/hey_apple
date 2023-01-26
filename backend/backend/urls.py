@@ -22,10 +22,6 @@ from rest_framework import permissions
 from . import settings
 
 router = routers.DefaultRouter()
-# schema_url_patterns = [ ?? 이거 뭔지 잘 모르겠음
-#     path('api/v1/', include('hey_apple_app.urls')),
-#     # path('api/v1/images/', include('images.urls')),
-# ]
 
 """
 Swagger Settings

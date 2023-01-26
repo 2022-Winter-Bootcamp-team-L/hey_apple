@@ -28,11 +28,19 @@ services:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
+    # command: >
+    #   sh -c "python wait_for_mysql.py &&
+    #           python manage.py makemigrations hey_apple_app &&
+    #           python manage.py migrate hey_apple_app &&
+    #           gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+
     command: >
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python manage.py runserver 0.0.0.0:8000"
+
+    # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
     volumes:
@@ -116,13 +124,13 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
-    - 9090:9090
+      - 9090:9090
     command:
-    - --config.file=/etc/prometheus/prometheus.yml
+      - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
-    - cadvisor
+      - cadvisor
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node_exporter
@@ -130,17 +138,17 @@ services:
     expose:
       - 9100
     ports:
-    - 9100:9100
+      - 9100:9100
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.0
     container_name: cadvisor
     ports:
-    - 8080:8080
+      - 8080:8080
     volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
     privileged: true
   grafana:
     image: grafana/grafana:latest
@@ -149,7 +157,7 @@ services:
     links:
       - prometheus:prometheus
     ports:
-    - 3000:3000
+      - 3000:3000
     volumes:
       - ./data/grafana:/var/lib/grafana
     environment:
