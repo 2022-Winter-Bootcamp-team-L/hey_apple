@@ -31,7 +31,7 @@ def get_info(num):
     fruit_list = ['사과','배','포도','감귤','바나나','키위','파인애플','오렌지','레몬','망고','단감','아보카도']
     eng_name_list = ['Apple','Pear','Grape','Mandarine','Banana','Kiwi','Pineapple','Orange',
     'Lemon','Mango','Persimmon','Avocado']
-    weight_to_count = [1,1,2,10,0.7,4,0.3,4,3,1,2,2]
+    weight_to_count = [1,1,2,10,5,4,0.3,4,3,1,2,2]
 
     fruit = fruit_list[num]
     eng_name = eng_name_list[num]
