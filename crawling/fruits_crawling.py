@@ -31,7 +31,7 @@ def get_info(num):
     fruit_list = ['사과','배','포도','감귤','바나나','키위','파인애플','오렌지','레몬','망고','단감','아보카도']
     eng_name_list = ['Apple','Pear','Grape','Mandarine','Banana','Kiwi','Pineapple','Orange',
     'Lemon','Mango','Persimmon','Avocado']
-    weight_to_count = [1,1,2,10,0.7,4,0.3,4,3,1,2,2]
+    weight_to_count = [1,1,2,10,5,4,0.3,4,3,1,2,2]
 
     fruit = fruit_list[num]
     eng_name = eng_name_list[num]
@@ -39,7 +39,7 @@ def get_info(num):
     fruit_name = driver.find_element(By.XPATH, # 과일 이름 가져오기
         r'//*[@id="gdid_selectPummokName"]').text
     print(fruit_name)
-    if fruit == '망고' or fruit == '아보카도' or fruit == '배': # 평균 가격 가져오기
+    if fruit == '망고' or fruit == '아보카도' or fruit == '배' or fruit == '파인애플': # 평균 가격 가져오기
         price_avg = driver.find_element(By.XPATH, # 망고, 아보카도만 예외
             r'//*[@id="gcid_itemList"]/div/div/div/ul/li[1]/a/div/div/div/p/span/b').text
     else :    
