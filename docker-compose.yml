@@ -129,7 +129,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
       - cadvisor
   node-exporter:
@@ -150,6 +150,7 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/machine-id:/etc/machine-id:ro
     privileged: true
   grafana:
     image: grafana/grafana:latest
@@ -161,7 +162,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./data/grafana:/var/lib/grafana
+      - ./monitor/data/grafana:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
@@ -171,7 +172,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - ./alertmanager/:/etc/alertmanager/
+      - ./monitor/alertmanager/:/etc/alertmanager/
     restart: always
     command:
       - '--config.file=/etc/alertmanager/config.yml'
