@@ -10,11 +10,11 @@ insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updat
 insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (4,"나오면안됨","11","배는 맛있어",2400,200,"2022-10-07","2022-11-01",1);
 
 #한글 입력안될시 임시 ... 사용하지마세요
-insert into fruit(id,name, harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (1,"apple","10","apple is good",5000,300,"2022-11-01","2022-11-01",0);
+insert into fruit(id,name, harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (1,"Apple","10","apple is good",5000,300,"2022-11-01","2022-11-01",0);
 
-insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (2,"bann","5","bnn is good",3000,400,"2022-12-31","2022-11-01",0);
+insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (2,"Persimmon","5","bnn is good",3000,400,"2022-12-31","2022-11-01",0);
 
-insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (3,"fea","11","fea is good",2400,200,"2022-10-07","2022-11-01",0);
+insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (3,"Mandarine","11","fea is good",2400,200,"2022-10-07","2022-11-01",0);
 
 insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (4,"not","11","fad is food",2400,200,"2022-10-07","2022-11-01",1);
 
