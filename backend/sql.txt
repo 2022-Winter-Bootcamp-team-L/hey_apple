@@ -10,48 +10,47 @@ insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updat
 insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (4,"나오면안됨","11","배는 맛있어",2400,200,"2022-10-07","2022-11-01",1);
 
 #한글 입력안될시 임시 ... 사용하지마세요
-insert into fruit(id,name, harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (1,"apple","10","apple is good",5000,300,"2022-11-01","2022-11-01",0);
+insert into fruit(id,name, harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (1,"Apple","10","apple is good",5000,300,"2022-11-01","2022-11-01",0);
 
-insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (2,"bann","5","bnn is good",3000,400,"2022-12-31","2022-11-01",0);
+insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (2,"Persimmon","5","bnn is good",3000,400,"2022-12-31","2022-11-01",0);
 
-insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (3,"fea","11","fea is good",2400,200,"2022-10-07","2022-11-01",0);
+insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (3,"Mandarine","11","fea is good",2400,200,"2022-10-07","2022-11-01",0);
 
 insert into fruit(id,name , harvest , content , price ,calorie ,created_at,updated_at,is_deleted) values (4,"not","11","fad is food",2400,200,"2022-10-07","2022-11-01",1);
 
+orderpayment
+
+insert into orderpayment(id,total_price,created_at ,updated_at,is_deleted) values(1,30000,"2022-11-10","2022-11-10",0);
+insert into orderpayment(id,total_price,created_at ,updated_at,is_deleted) values(2,50000,"2022-11-10","2022-11-10",0);
+insert into orderpayment(id,total_price,created_at ,updated_at,is_deleted) values(3,80000,"2022-11-10","2022-11-10",0);
+insert into orderpayment(id,total_price,created_at ,updated_at,is_deleted) values(4,100000,"2022-11-10","2022-11-10",0);
+
 imgae
 
-insert into image(id,s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values(1,"testurl","testresURL","2022-11-11","2022-11-11",0);
+insert into image(id,orderpayment_id,s3_image_url ,s3_result_image_url,image_price,created_at,updated_at,is_deleted)values(1,1,"testurl","testresURL",50000,"2022-11-11","2022-11-11",0);
 
-insert into image(id,s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values(2,"testurl2","testresURL2","2022-01-07","2022-01-07",0);
+insert into image(id,orderpayment_id,s3_image_url ,s3_result_image_url,image_price,created_at,updated_at,is_deleted)values(2,1,"testurl2","testresURL2",56000,"2022-01-07","2022-01-07",0);
 
-insert into image(id,s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values(3,"testurl3","testresURL3","2022-11-11","2022-11-11",0);
+insert into image(id,orderpayment_id,s3_image_url ,s3_result_image_url,image_price,created_at,updated_at,is_deleted)values(3,2,"testurl3","testresURL3",120000,"2022-11-11","2022-11-11",0);
 
-insert into image(id,s3_image_url ,s3_result_image_url,created_at,updated_at,is_deleted)values(4,"boot","testresURL3","2022-11-11","2022-11-11",1);
+insert into image(id,orderpayment_id,s3_image_url ,s3_result_image_url,image_price,created_at,updated_at,is_deleted)values(4,2,"boot","testresURL3",77000,"2022-11-11","2022-11-11",1);
 
-OrderBill
 
-insert into orderbill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(1,"2022-11-10",30000,"2022-11-10","2022-11-10",0);
 
-insert into orderbill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(2,"2022-11-11",28000,"2022-11-11","2022-11-11",0);
+FruitOrder
 
-insert into orderbill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(3,"2022-11-12",25000,"2022-11-12","2022-11-12",0);
+insert into fruitorder (fruit_id , image_id,count,created_at,updated_at,is_deleted) values(1,1,3,"2022-11-10","2022-11-10",0);
 
-insert into orderbill(image_id,date_of_purchase,total_price,created_at ,updated_at,is_deleted) values(4,"2022-11-13",36000,"2022-11-13","2022-11-13",1);
+insert into fruitorder (fruit_id , image_id,count,created_at,updated_at,is_deleted) values(2,1,4,"2022-11-10","2022-11-10",0);
 
-FruitOrderBill
+insert into fruitorder (fruit_id , image_id,count,created_at,updated_at,is_deleted) values(1,2,2,"2022-11-11","2022-11-11",0);
 
-insert into fruitorderbill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(1,1,3,"2022-11-10","2022-11-10",0);
+insert into fruitorder(fruit_id , image_id,count,created_at,updated_at,is_deleted) values(3,2,6,"2022-11-11","2022-11-11",0);
 
-insert into fruitorderbill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(2,1,4,"2022-11-10","2022-11-10",0);
+insert into fruitorder(fruit_id , image_id,count,created_at,updated_at,is_deleted) values(2,3,4,"2022-11-12","2022-11-12",0);
 
-insert into fruitorderbill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(1,2,2,"2022-11-11","2022-11-11",0);
+insert into fruitorder (fruit_id , image_id,count,created_at,updated_at,is_deleted) values(3,3,1,"2022-11-12","2022-11-12",0);
 
-insert into fruitorderbill(fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(3,2,6,"2022-11-11","2022-11-11",0);
+insert into fruitorder (fruit_id , image_id,count,created_at,updated_at,is_deleted) values(1,1,3,"2022-11-13","2022-11-13",1);
 
-insert into fruitorderbill(fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(2,3,4,"2022-11-12","2022-11-12",0);
-
-insert into fruitorderbill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(3,3,1,"2022-11-12","2022-11-12",0);
-
-insert into fruitorderbill (fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(1,1,3,"2022-11-13","2022-11-13",1);
-
-insert into fruitorderbill(fruit_id , orderbill_id,count,created_at,updated_at,is_deleted) values(2,1,4,"2022-11-13","2022-11-13",1);
+insert into fruitorder(fruit_id , image_id,count,created_at,updated_at,is_deleted) values(2,1,4,"2022-11-13","2022-11-13",1);

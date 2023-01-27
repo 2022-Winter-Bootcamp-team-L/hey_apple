@@ -10,7 +10,7 @@ from uuid import uuid4
 def ai_inference(url, folder_name):
     # Model
     model = torch.hub.load('ultralytics/yolov5', 'custom',
-    path="/backend/hey_apple_app/model_file/best.pt", _verbose=False)
+                           path="/backend/hey_apple_app/model_file/best_eng.pt", _verbose=False)
 
     # Images
     image_nparray = np.asarray(
@@ -34,9 +34,38 @@ def ai_inference(url, folder_name):
     # Results
     image_name = str(uuid4())  # 입력받은 이미지만의 아이디 생성
 
-    results.render()  # updates results.ims with boxes and labels
+    colors = {
+        0: (255, 56, 56),
+        1: (255, 157, 151),
+        2: (255, 178, 29),
+        3: (207, 210, 49),
+        4: (72, 249, 10),
+        5: (146, 204, 23),
+        6: (61, 219, 134),
+        7: (26, 147, 52),
+        8: (0, 212, 187),
+        9: (44, 153, 168),
+        10: (0, 194, 255),
+        11: (132, 56, 255),
+    }
+    lw = max(round((h + w) / 2 * 0.003), 2)
+    font_color = (255, 255, 255)
+    # Results
+    fruits = results.pandas().xyxy[0].values.tolist()
+    for fruit in fruits:
+        p1 = (int(fruit[0]), int(fruit[1]))
+        p2 = (int(fruit[2]), int(fruit[3]))
+        cv2.rectangle(img, p1, p2, colors[fruit[5]], lw, lineType=cv2.LINE_AA)
+
+        # label
+        tf = max(lw-1, 1)
+        w, h = cv2.getTextSize(fruit[6], 0, fontScale=lw / 3, thickness=tf)[0]
+        p2 = (p1[0] + w, p1[1] - h - 3)
+        cv2.rectangle(img, p1, p2, colors[fruit[5]], -1, cv2.LINE_AA)
+        cv2.putText(img, fruit[6], (p1[0], p1[1] - 2), 0,
+                    lw/3, font_color, thickness=tf, lineType=cv2.LINE_AA)
     cv2.imwrite('/backend/ai_image/' + folder_name + '/' + "detected_" + image_name + '.jpg',
-                results.ims[0][:h+1, :w+1, ::-1])
+                img)
 
     s3 = s3_connection()  # s3 연결 확인
 
@@ -49,12 +78,3 @@ def ai_inference(url, folder_name):
         s3, 'image/detected_' + image_name + '.jpg')
 
     return [results.pandas().xyxy[0].values.tolist(), s3_url]
-
-
-if __name__ == "__main__":
-    url = 'https://heyapple.s3.ap-northeast-2.amazonaws.com/image/appleorange.jpg'
-    # url = 'https://heyapple.s3.ap-northeast-2.amazonaws.com/image/%E1%84%80%E1%85%B2%E1%86%AF.jpeg'
-    # url = "https://heyapple.s3.ap-northeast-2.amazonaws.com/image/apples.jpeg"
-    # url = "https://heyapple.s3.ap-northeast-2.amazonaws.com/image/%E1%84%89%E1%85%A1%E1%84%80%E1%85%AA.jpeg"
-    # url = "https://heyapple.s3.ap-northeast-2.amazonaws.com/image/strawberry.jpeg"
-    print(ai_inference(url))

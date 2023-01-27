@@ -30,10 +30,11 @@ except Exception:
 
 
 def insert_mongo(): #파일을 읽어 mongodb에 데이터 추가
-    today = datetime.now().strftime('%Y-%m-%d')
+    # today = datetime.now().strftime('%Y-%m-%d')
     db = mongo_client['heyapple']
-    collection = db[today]
+    db.fruits_data.drop()
 
+    collection = db['fruits_data']
     file = pd.read_csv("DB_FRUITS.csv", encoding="utf-8")
     print('csv파일 분석')
     collection.insert_many(file.to_dict('records'))
@@ -41,9 +42,9 @@ def insert_mongo(): #파일을 읽어 mongodb에 데이터 추가
 
 
 def insert_fruit_price():
-    today = datetime.now().strftime('%Y-%m-%d')
+    # today = datetime.now().strftime('%Y-%m-%d')
     mongo_db = mongo_client['heyapple']
-    collection = mongo_db[today]
+    collection = mongo_db['fruits_data']
 
     fruits = collection.find()
     print('mongodb에서 값 가져오기')    
@@ -59,34 +60,11 @@ def insert_fruit_price():
     print('과일 가격 수정')
     mysql_con.commit()
     print('mysql에 저장')
-        
-
     
     mysql_cursor.close()
     mysql_con.close()
-
-
 
 print('데이터 업로드를 시작합니다.......')
 insert_mongo()
 insert_fruit_price()
 print('데이터 업로드 종료......')
-
-
-
-
-# db = client["test"]
-# collection = db["student"]
-# post={"_id":0,"name":"kailash joshi tutorials"}
-# result = collection.find()
-# for result in result:
-#     print(result)
-
-
-
-
-
-
-
-
-#  print(client.list_database_names())
