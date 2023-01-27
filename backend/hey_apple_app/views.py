@@ -22,7 +22,7 @@ import logging
 
 from celery.result import AsyncResult
 from uuid import uuid4
-
+from pprint import pprint
 
 class FruitsInfo(APIView):
     id = openapi.Parameter(
@@ -45,7 +45,7 @@ class FruitsImage(APIView):
     parser_classes = [MultiPartParser]
 
     type = openapi.Parameter('filename', openapi.IN_FORM,
-                             type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
+                            type=openapi.TYPE_FILE, description='주문할 과일이 찍힌 사진을 선택해주세요.')
 
     @swagger_auto_schema(manual_parameters=[type])
     def post(self, request):
@@ -79,6 +79,7 @@ class FruitsPayment(APIView):
                 return JsonResponse({"ai_resutl" : "notyet"})
             result_list.append(task.get('result'))
 
+        pprint(result_list)
         total_price = 0
         result_url_list = []
         fruit_list = {}
@@ -88,8 +89,9 @@ class FruitsPayment(APIView):
                 name = info['fruit_info']['name']
                 count = info['count']
                 if not name in fruit_list:
-                    fruit_list[name] = 0
-                fruit_list[name] += int(count)
+                    fruit_list[name] = {'count': 0, 'price':0}
+                fruit_list[name]['count'] += int(count)
+                fruit_list[name]['price'] = info['fruit_info']['price']
             orderpayment_id = image['orderpayment_id']
             total_price += image['image_price']
             result_url_list.append(image['s3_result_image_url'])
