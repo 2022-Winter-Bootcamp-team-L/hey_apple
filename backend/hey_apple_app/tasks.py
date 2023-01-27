@@ -190,9 +190,11 @@ def mail_task(request):
         if emailcheckFlag == 1:
             try:  # context 생성 .. 이메일 본문 생성
                 print("이미지 : \n" , content_img_price , "과일정보 : \n", content_fruit , "총가격 : ", total_price)
-                content = subject+"님 hey, Apple 이용에 감사드립니다."
-                content +="이미지별 각 가격입니다. \n"+ content_img_price +"\n"+"과일정보 입니다. \n"+content_fruit+"\n\n"+"총가격입니다."+total_price+"\n"
-                content +="http://3.39.167.173:3001/"
+                content = subject+"님 hey, Apple 이용에 감사드립니다.\n"
+                content +="이미지별 각 가격입니다. \n" + content_img_price +"\n\n"
+                content +="과일정보입니다. \n" + content_fruit+"\n\n"
+                content += "총가격 입니다."+str(total_price)+"\n\n"
+                content +="http://3.39.167.173:3001"
             except:
                 emailcheckFlag = 4
                 return emailcheckFlag
