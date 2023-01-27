@@ -311,5 +311,5 @@ elasticsearch/snapshot_cache
 
 elasticsearch/indices
 
-data/grafana/grafana.db
+monitor/data/grafana/grafana.db
 
