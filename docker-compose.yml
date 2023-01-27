@@ -40,7 +40,6 @@ services:
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python manage.py runserver 0.0.0.0:8000"
-
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
@@ -74,7 +73,6 @@ services:
     command: >
       sh -c "python3 fruits_crawling.py &&
               python3 pymongo_tut.py"
-
     # command: >
     #   sh -c "python3 pymongo_tut.py"
 
@@ -177,3 +175,37 @@ services:
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
+
+  elasticsearch:
+    container_name: elasticsearch
+    build:
+      context: elasticsearch/
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m" # 자바 메모리
+      ELASTIC_PASSWORD: heyapple123
+    healthcheck:
+      test: curl --silent http://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  kibana:
+    container_name: kibana
+    build:
+      context: kibana/
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,z
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - rabbitmq
+      - backend
