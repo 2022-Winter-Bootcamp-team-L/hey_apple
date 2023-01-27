@@ -76,3 +76,34 @@
     //         'is status 200': (r) => r.status === 200,
     //             });
 	// }
+
+
+    const res = http.post('http://3.39.167.173:8000/api/v1/orders/tasks', data); //img upload
+        console.log(res)
+        // for (let id = 1; id <= 5; id++) {
+        //     http.get(`http://3.39.167.173:8000/api/v1/fruits/${id}`);
+        // }
+        // let email = "1106q@naver.com"
+        // http.get(`http://3.39.167.173:8000/api/v1/bills?email=${email}&orderpayment_id=c7da1638f3e341b899aad4f4f285fa75`);
+        sleep(2);
+        //testSelect();
+        //testEmail();
+        //testReturn();
+
+    function testReturn() {
+
+            http.get(`http://3.39.167.173:8000/api/v1//orders/tasks/35acbbc8b16f4fe499bb042e5570978f`);
+
+    }
+    function testSelect() {
+    for (let id = 1; id <= 5; id++) {
+        http.get(`http://3.39.167.173:8000/api/v1/fruits/${id}`);
+    }
+}
+
+function testEmail() {
+    let email = "1106q@naver.com"
+        http.get(`http://3.39.167.173:8000/api/v1/bills?email=${email}&orderpayment_id=35acbbc8b16f4fe499bb042e5570978f`);
+  
+}
+	    //test img return
