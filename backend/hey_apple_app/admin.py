@@ -5,7 +5,7 @@ from .models import fruit, image, orderpayment, fruitorder
 
 @admin.register(fruit)
 class FruitAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'harvest', 'content', 'price', 'calorie', 'created_at', 'updated_at', 'is_deleted']
+    list_display = ['id', 'name', 'season', 'details', 'nutrition', 'price', 'calories', 'created_at', 'updated_at', 'is_deleted']
 
 
 @admin.register(image)
