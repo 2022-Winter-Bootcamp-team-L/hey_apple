@@ -47,7 +47,9 @@ class My_Elasticsearch():
         with open('/backend/hey_apple_app/mapping.json', 'r') as f:
             mapping = json.load(f)
         try:
+            time.sleep(2)
             self.es.indices.create(index=_index, body=mapping)
+            time.sleep(2)
             helpers.bulk(self.es, _data, index=_index)
         except RequestError as ex:
             if ex.error == 'resource_already_exists_exception':
@@ -89,4 +91,5 @@ def elastic_check():
 
 
 elastic_check()
+time.sleep(2)
 es_import()

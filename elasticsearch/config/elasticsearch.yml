@@ -7,9 +7,9 @@ discovery.type: single-node
 
 # cluster.inital_master_nodes: ["node-1"]
 
-http.cors.enabled: true 
+http.cors.enabled: true
 http.cors.allow-origin: "*"
 
-xpack.license.self_generated.type: trial
+xpack.license.self_generated.type: basic
 xpack.security.enabled: false
-xpack.monitoring.collection.enabled: true
+# xpack.monitoring.collection.enabled: true
