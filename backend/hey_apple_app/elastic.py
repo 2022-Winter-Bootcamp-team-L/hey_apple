@@ -28,7 +28,7 @@ class My_MongoDB():
 class My_Elasticsearch():
     def __init__(self):
         self.es = Elasticsearch(
-            hosts=['http://elasticsearch:9200'],
+            hosts=['http://elasticsearch:9200']
             # http_auth=('elastic', 'heyapple123')
         )
 
