@@ -180,3 +180,9 @@ CACHES = {
         'LOCATION': 'redis://redis:6379',
     }
 }
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'elasticsearch'
+    },
+}
