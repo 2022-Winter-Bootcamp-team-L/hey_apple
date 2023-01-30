@@ -85,6 +85,9 @@ def ai_task(request, orderpayment_id):
     result['fruit_list'] = fruit_list
     i_image.image_price = image_price
 
+    if is_o_created:
+        o_orderpayment.total_price = 0
+    o_orderpayment.total_price += image_price
     o_orderpayment.save()
 
     i_image.save() # 이미지 끝
@@ -188,8 +191,8 @@ def mail_task(request):
             try:  # context 생성 .. 이메일 본문 생성
                 print("이미지 : \n" , content_img_price , "과일정보 : \n", content_fruit , "총가격 : ", total_price)
                 content = subject+"님 hey, Apple 이용에 감사드립니다."
-                content +="이미지별 각 가격입니다. \n"+ content_img_price +"\n"+"과일정보 입니다. \n"+content_fruit+"\n\n"+"총가격입니다.\n"
-                content +="URL"
+                content +="이미지별 각 가격입니다. \n"+ content_img_price +"\n"+"과일정보 입니다. \n"+content_fruit+"\n\n"+"총가격입니다."+total_price+"\n"
+                content +="http://3.39.167.173:3001/"
             except:
                 emailcheckFlag = 4
                 return emailcheckFlag

@@ -303,3 +303,11 @@ backend/mysql-db/*
 secrets.json
 backend/ai_image/*
 /backend/hey_apple_app/migrations/*
+
+elasticsearch/_state/
+elasticsearch/node.lock
+elasticsearch/nodes
+elasticsearch/snapshot_cache
+elasticsearch/indices
+
+data/grafana/grafana.db
