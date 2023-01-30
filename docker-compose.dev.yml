@@ -51,7 +51,8 @@ services:
     expose:
       - 8000
     depends_on:
-      - db
+      elasticsearch:
+        condition: service_healthy
 
   redis:
     image: redis:latest
@@ -210,8 +211,8 @@ services:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
-      - rabbitmq
-      - backend
+      elasticsearch:
+        condition: service_healthy
   # frontend:
   #   build:
   #     context: ./frontend/hey-apple
