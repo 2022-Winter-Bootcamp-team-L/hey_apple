@@ -11,6 +11,8 @@ import json
 from pathlib import Path
 from elasticsearch_dsl import Search, connections
 from rest_framework.decorators import api_view
+
+
 # Get mongoDB data
 
 class My_MongoDB():
@@ -23,6 +25,7 @@ class My_MongoDB():
 
     def __del__(self):
         self.client.close()
+
 
 # Create Elasticsearch index & import
 
@@ -91,10 +94,11 @@ def elastic_check():
 elastic_check()
 es_import()
 
+
 @api_view(['GET'])
 def elastic_search_get_by_name(request):
     try:
-        conn = connections.create_connection(hosts=['elasticsearch'], timeout=20)
+        conn = connections.create_connection(timeout=20)
         s = Search().using(conn)
         return_result = []
         for hit in s:
