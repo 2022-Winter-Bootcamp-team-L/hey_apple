@@ -81,9 +81,11 @@ def elastic_check():
             elastic.es.info()
             connected = True
             print("connected!!!!!!!!!!!!!!!!!!!!")
+            return 1
         except ConnectionError:
             print("Elasticsearch not available yet, trying again in 2s...")
             time.sleep(2)
+            return 0
 
 
 elastic_check()

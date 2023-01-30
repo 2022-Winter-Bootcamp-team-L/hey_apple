@@ -42,6 +42,7 @@ services:
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python hey_apple_app/elastic.py &&
+              python hey_apple_app/scheduler.py &&
               python manage.py runserver 0.0.0.0:8000"
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
@@ -74,8 +75,7 @@ services:
     user: root
 
     command: >
-      sh -c "python3 fruits_crawling.py &&
-              python3 pymongo_tut.py"
+      sh -c "python3 scheduler.py"
     # command: >
     #   sh -c "python3 pymongo_tut.py"
 
