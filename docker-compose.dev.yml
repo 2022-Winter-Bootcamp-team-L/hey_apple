@@ -52,7 +52,8 @@ services:
       - 8000
     depends_on:
       - db
-
+    environment:
+      - TZ=Asia/Seoul
   redis:
     image: redis:latest
     command: redis-server --port 6379
