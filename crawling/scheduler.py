@@ -12,6 +12,8 @@ def crawlingFuc():
     print(crawling_result)
     if crawling_result == 1 : #1 is sucess
         pymongo_tut.mongoa() #start mongo_save
+    else :
+        print("크롤링 스케줄러..실패...")
         
 
 def time_stamp():

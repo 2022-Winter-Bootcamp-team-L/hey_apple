@@ -11,7 +11,8 @@ def crawlingFuc():
     print(elastic_result)
     if elastic_result == 1 : #1 is sucess
         elastic.es_import() #start elastic
-        
+    else :
+        print("크롤링 스케줄러..실패...")
 
 def time_stamp():
     this_time = time.strftime('%Y.%m.%d - %H:%M:%S')
