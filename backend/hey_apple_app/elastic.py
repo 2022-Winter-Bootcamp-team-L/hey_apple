@@ -33,8 +33,8 @@ class My_MongoDB():
 class My_Elasticsearch():
     def __init__(self):
         self.es = Elasticsearch(
-            hosts=['http://elasticsearch:9200'],
-            http_auth=('elastic', 'heyapple123')
+            hosts=['http://elasticsearch:9200']
+            # http_auth=('elastic', 'heyapple123')
         )
 
     def Search(self, _index, data=None):
@@ -70,7 +70,7 @@ def es_import():
     print("#######################################################")
     print("heyapple", data)
     elastic.Insert("heyapple", data)
-    print("제발", end="제발")
+    print("insert 확인")
     data = {"name": "Apple"}
     pprint.pprint(elastic.Search("heyapple", data))
 
