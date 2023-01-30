@@ -30,19 +30,14 @@ services:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
+
     command: >
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python hey_apple_app/elastic.py &&
-              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
-
-    # command: >
-    #   sh -c "python wait_for_mysql.py &&
-    #           python manage.py makemigrations hey_apple_app &&
-    #           python manage.py migrate hey_apple_app &&
-    #           python hey_apple_app/elastic.py &&
-    #           python manage.py runserver 0.0.0.0:8000"
+              python hey_apple_app/scheduler.py &&
+              python manage.py runserver 0.0.0.0:8000"
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
@@ -68,22 +63,21 @@ services:
     ports:
       - 6379:6379
 
-  # crawling:
-  #   build: ./crawling
-  #   shm_size: 2gb
-  #   user: root
+  crawling:
+    build: ./crawling
+    shm_size: 2gb
+    user: root
 
-  #   command: >
-  #     sh -c "python3 fruits_crawling.py &&
-  #             python3 pymongo_tut.py"
-  #   # command: >
-  #   #   sh -c "python3 pymongo_tut.py"
+    command: >
+      sh -c "python3 scheduler.py"
+    # command: >
+    #   sh -c "python3 pymongo_tut.py"
 
-  #   environment:
-  #     - SE_EVENT_BUS_HOST=selenium-hub
-  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
-  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-  #   tty: true
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    tty: true
 
   nginx:
     container_name: nginx
@@ -168,17 +162,17 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
-  # alertmanager:
-  #   container_name: alertmanager
-  #   image: prom/alertmanager
-  #   ports:
-  #     - "9093:9093"
-  #   volumes:
-  #     - ./monitor/alertmanager/:/etc/alertmanager/
-  #   restart: always
-  #   command:
-  #     - '--config.file=/etc/alertmanager/config.yml'
-  #     - '--storage.path=/alertmanager'
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitor/alertmanager/:/etc/alertmanager/
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
 
   elasticsearch:
     container_name: elasticsearch

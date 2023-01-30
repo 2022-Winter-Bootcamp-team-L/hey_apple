@@ -9,3 +9,5 @@ webdriver-manager
 pymysql
 pyvirtualdisplay # 가상 화면 생성
 
+#scheduler
+schedule 
