@@ -30,6 +30,13 @@ services:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
+    command: >
+      sh -c "python wait_for_mysql.py &&
+              python manage.py makemigrations hey_apple_app &&
+              python manage.py migrate hey_apple_app &&
+              python hey_apple_app/elastic.py &&
+              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+
     # command: >
     #   sh -c "python wait_for_mysql.py &&
     #           python manage.py makemigrations hey_apple_app &&
@@ -69,21 +76,21 @@ services:
     ports:
       - 6379:6379
 
-  crawling:
-    build: ./crawling
-    shm_size: 2gb
-    user: root
+  # crawling:
+  #   build: ./crawling
+  #   shm_size: 2gb
+  #   user: root
 
     command: >
       sh -c "python3 scheduler.py"
     # command: >
     #   sh -c "python3 pymongo_tut.py"
 
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-    tty: true
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #   tty: true
 
   nginx:
     container_name: nginx
@@ -168,17 +175,17 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
-  alertmanager:
-    container_name: alertmanager
-    image: prom/alertmanager
-    ports:
-      - "9093:9093"
-    volumes:
-      - ./monitor/alertmanager/:/etc/alertmanager/
-    restart: always
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
+  # alertmanager:
+  #   container_name: alertmanager
+  #   image: prom/alertmanager
+  #   ports:
+  #     - "9093:9093"
+  #   volumes:
+  #     - ./monitor/alertmanager/:/etc/alertmanager/
+  #   restart: always
+  #   command:
+  #     - '--config.file=/etc/alertmanager/config.yml'
+  #     - '--storage.path=/alertmanager'
 
   elasticsearch:
     container_name: elasticsearch
@@ -192,7 +199,7 @@ services:
       - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx512m -Xms512m" # 자바 메모리
-      ELASTIC_PASSWORD: heyapple123
+      # ELASTIC_PASSWORD: heyapple123
     healthcheck:
       test: curl --silent http://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
