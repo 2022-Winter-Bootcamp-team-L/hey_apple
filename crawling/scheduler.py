@@ -24,8 +24,9 @@ def scheduler():
     crawlingFuc()
     
     print ("스케줄러가 시작합니다")
-    schedule.every(5).seconds.do(time_stamp)
+    #schedule.every(5).seconds.do(time_stamp)
     #schedule.every(300).seconds.do(crawlingFuc)
+    schedule.every().hour.do(time_stamp)# 한시간에 한번씩
     schedule.every().day.at("02:00").do(crawlingFuc)
 
 
