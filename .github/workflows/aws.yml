@@ -5,6 +5,10 @@ on:
     branches:
       - develop
 
+  push:
+    branches:
+      - feature#110
+
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: heyapple
