@@ -8,5 +8,6 @@ urlpatterns = [
     path('fruits/<int:id>', FruitsInfo.as_view()),
     path('orders/tasks', FruitsImage.as_view()),
     path('orders/tasks/<task_id>', FruitsPayment.as_view()),
-    path('bills', EmailPost.as_view())
+    path('bills', EmailPost.as_view()),
+    path('graph', EmailPost.as_view())
 ]

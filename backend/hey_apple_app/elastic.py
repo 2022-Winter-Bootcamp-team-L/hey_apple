@@ -1,5 +1,7 @@
 import pprint
 import time
+
+from django.http import JsonResponse
 from pymongo import MongoClient
 import os
 from elasticsearch import Elasticsearch, helpers
@@ -7,6 +9,8 @@ from elasticsearch.exceptions import ConnectionError, RequestError
 import pandas as pd
 import json
 from pathlib import Path
+from elasticsearch_dsl import Search, connections
+from rest_framework.decorators import api_view
 
 
 # Get mongoDB data
@@ -21,6 +25,7 @@ class My_MongoDB():
 
     def __del__(self):
         self.client.close()
+
 
 # Create Elasticsearch index & import
 
@@ -93,3 +98,16 @@ def elastic_check():
 elastic_check()
 time.sleep(2)
 es_import()
+
+
+@api_view(['GET'])
+def elastic_search_get_by_name(request):
+    try:
+        conn = connections.create_connection(timeout=20)
+        s = Search().using(conn)
+        return_result = []
+        for hit in s:
+            return_result.append(hit.key)
+    except ConnectionError:
+        return JsonResponse({'result': "fail"}, status=400)
+    return JsonResponse({'result': return_result}, status=200)
