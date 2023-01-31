@@ -1,7 +1,6 @@
 version: "3"
 
 volumes:
-
   prometheus_data: {}
   grafana_data: {}
   build_folder: null
@@ -26,12 +25,12 @@ services:
     container_name: backend
     build:
       context: ./backend
-
       args:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
-    image: backend
+
+    image: ${DOCKER_REGISTRY}/backend:latest
     command: >
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
@@ -68,6 +67,7 @@ services:
 
   crawling:
     build: ./crawling
+    image: ${DOCKER_REGISTRY}/crawling:latest
     shm_size: 2gb
     user: root
 
@@ -83,25 +83,25 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     tty: true
 
-
   nginx:
     container_name: nginx
     build:
       context: "./nginx"
+    image: ${DOCKER_REGISTRY}/nginx:latest
     ports:
       - 80:80 # [호스트 포트]:[컨테이너 포트]
     volumes:
       - build_folder:/var/www/frontend
     depends_on:
       - backend
-      # - frontend
+      - frontend
 
   celery_worker:
     container_name: celery_worker
-    image: backend
+    image: ${DOCKER_REGISTRY}/backend:latest
     volumes:
       - ./backend:/backend
-    ports: [ ]
+    ports: []
     depends_on:
       - rabbitmq
       - backend
@@ -182,6 +182,7 @@ services:
     container_name: elasticsearch
     build:
       context: elasticsearch/
+    image: ${DOCKER_REGISTRY}/elasticsearch:latest
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       # - ./elasticsearch:/usr/share/elasticsearch/data
@@ -201,6 +202,7 @@ services:
     container_name: kibana
     build:
       context: kibana/
+    image: ${DOCKER_REGISTRY}/kibana:latest
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,z
     ports:
@@ -211,13 +213,12 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-
-  # frontend:
-  #   build:
-  #     context: ./frontend/hey-apple
-  #   volumes:
-  #     - ./frontend/hey-apple/:/frontend
-  #     - build_folder:/frontend/build
-  #     - ./frontend/node_modules/:/frontend/node_modules
-  #   tty: true
-
+  frontend:
+    build:
+      context: ./frontend/hey-apple
+    image: ${DOCKER_REGISTRY}/frontend:latest
+    volumes:
+      - ./frontend/hey-apple/:/frontend
+      - build_folder:/frontend/build
+      - ./frontend/node_modules/:/frontend/node_modules
+    tty: true
