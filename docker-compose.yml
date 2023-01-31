@@ -94,7 +94,7 @@ services:
       - build_folder:/var/www/frontend
     depends_on:
       - backend
-      - frontend
+      # - frontend
 
   celery_worker:
     container_name: celery_worker
