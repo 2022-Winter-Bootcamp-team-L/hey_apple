@@ -43,6 +43,14 @@ jobs:
           echo "${{secrets.SECRETS_JSON}}" >> secrets.json
           cat secrets.json
 
+    - name: Create .env file for docker-compose.prod.yml
+      working-directory: ./
+      run: |
+          pwd
+          touch .env
+          echo "${{secrets.DOCKER_ENV}}" >> secrets.json
+          cat secrets.json
+
     - name: Build docker images
       run: |
           docker-compose -f docker-compose.prod.yml build
