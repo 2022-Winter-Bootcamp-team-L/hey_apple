@@ -211,12 +211,12 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-  frontend:
-    build:
-      context: ./frontend/hey-apple
-    volumes:
-      - ./frontend/hey-apple/:/frontend
-      - build_folder:/frontend/build
-      - ./frontend/node_modules/:/frontend/node_modules
-    tty: true
+  # frontend:
+  #   build:
+  #     context: ./frontend/hey-apple
+  #   volumes:
+  #     - ./frontend/hey-apple/:/frontend
+  #     - build_folder:/frontend/build
+  #     - ./frontend/node_modules/:/frontend/node_modules
+  #   tty: true
 
