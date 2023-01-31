@@ -48,8 +48,8 @@ jobs:
       run: |
           pwd
           touch .env
-          echo "${{secrets.DOCKER_ENV}}" >> secrets.json
-          cat secrets.json
+          echo "${{secrets.DOCKER_ENV}}" >> .env
+          cat .env
 
     - name: Build docker images
       run: |
