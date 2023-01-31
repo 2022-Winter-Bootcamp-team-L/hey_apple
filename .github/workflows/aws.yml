@@ -45,7 +45,7 @@ jobs:
 
     - name: Build docker images
       run: |
-          docker-compose build
+          docker-compose -f docker-compose.prod.yml build
           docker images
 
     - name: Push images to Amazon ECR repositorys
