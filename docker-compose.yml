@@ -1,9 +1,9 @@
 version: "3"
 
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
-    build_folder: null
+  prometheus_data: {}
+  grafana_data: {}
+  build_folder: null
 
 services:
   db:
@@ -30,14 +30,14 @@ services:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
-
+    image: backend
     command: >
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python hey_apple_app/elastic.py &&
               python hey_apple_app/scheduler.py &&
-              python manage.py runserver 0.0.0.0:8000"
+              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
@@ -46,7 +46,8 @@ services:
     expose:
       - 8000
     depends_on:
-      - db
+      elasticsearch:
+        condition: service_healthy
     environment:
       - TZ=Asia/Seoul
   redis:
@@ -95,8 +96,7 @@ services:
 
   celery_worker:
     container_name: celery_worker
-    build:
-      context: ./backend
+    image: backend
     volumes:
       - ./backend:/backend
     ports: []
@@ -173,8 +173,8 @@ services:
       - ./monitor/alertmanager/:/etc/alertmanager/
     restart: always
     command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--storage.path=/alertmanager'
+      - "--config.file=/etc/alertmanager/config.yml"
+      - "--storage.path=/alertmanager"
 
   elasticsearch:
     container_name: elasticsearch
@@ -207,8 +207,8 @@ services:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
-      - rabbitmq
-      - backend
+      elasticsearch:
+        condition: service_healthy
   frontend:
     build:
       context: ./frontend/hey-apple
