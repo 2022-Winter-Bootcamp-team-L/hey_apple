@@ -69,10 +69,3 @@ seaborn>=0.11.0
 # # pycocotools>=2.0.6  # COCO mAP
 # # roboflow
 # # ultralytics  # HUB https://hub.ultralytics.com
-
-# elasticsearch==8.0.0
-# elastic-transport == 8.0.0
-acryl-datahub[datahub-rest,elasticsearch]==0.8.27.1
-
-#scheduler
-schedule 
