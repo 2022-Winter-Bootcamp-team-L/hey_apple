@@ -35,9 +35,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Clone github repository hey_apple
-      run: git clone https://github.com/2022-Winter-Bootcamp-team-L/hey_apple.git
-
     - name: Create secrets.json file
       working-directory: ./backend
       run: |
