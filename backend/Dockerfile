@@ -27,6 +27,5 @@ RUN apt update && apt install --no-install-recommends -y libgl1-mesa-glx build-e
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install pymysql
 
 COPY . /backend/

@@ -1,7 +1,6 @@
 version: "3"
 
 volumes:
-
   prometheus_data: {}
   grafana_data: {}
   build_folder: null
@@ -26,19 +25,24 @@ services:
     container_name: backend
     build:
       context: ./backend
-
       args:
         DJANGO_ALLOWED_HOSTS: "*"
         DJANGO_SECRET_KEY: "*"
         DJANGO_CORS_ORIGIN_WHITELIST: "*"
     image: backend
+    # command: >
+    #   sh -c "python wait_for_mysql.py &&
+    #           python manage.py makemigrations hey_apple_app &&
+    #           python manage.py migrate hey_apple_app &&
+    #           python hey_apple_app/elastic.py &&
+    #           gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+
     command: >
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
               python hey_apple_app/elastic.py &&
-              python hey_apple_app/scheduler.py &&
-              gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
+              python manage.py runserver 0.0.0.0:8000"
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
       - 8000:8000
@@ -66,23 +70,22 @@ services:
     ports:
       - 6379:6379
 
-  crawling:
-    build: ./crawling
-    shm_size: 2gb
-    user: root
+  # crawling:
+  #   build: ./crawling
+  #   shm_size: 2gb
+  #   user: root
 
-    command: >
-      sh -c "python3 scheduler.py"
-    # command: >
-    #   sh -c "python3 pymongo_tut.py"
+  #   command: >
+  #     sh -c "python3 fruits_crawling.py &&
+  #             python3 pymongo_tut.py"
+  #   # command: >
+  #   #   sh -c "python3 pymongo_tut.py"
 
-    environment:
-      - TZ=Asia/Seoul
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-    tty: true
-
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  #   tty: true
 
   nginx:
     container_name: nginx
@@ -94,14 +97,14 @@ services:
       - build_folder:/var/www/frontend
     depends_on:
       - backend
-      - frontend
+      # - frontend
 
   celery_worker:
     container_name: celery_worker
     image: backend
     volumes:
       - ./backend:/backend
-    ports: [ ]
+    ports: []
     depends_on:
       - rabbitmq
       - backend
@@ -121,62 +124,62 @@ services:
     expose:
       - "15672"
 
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - 9090:9090
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-    volumes:
-      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-      - cadvisor
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node_exporter
-    restart: unless-stopped
-    expose:
-      - 9100
-    ports:
-      - 9100:9100
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.0
-    container_name: cadvisor
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /etc/machine-id:/etc/machine-id:ro
-    privileged: true
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    user: root
-    restart: unless-stopped
-    links:
-      - prometheus:prometheus
-    ports:
-      - 3000:3000
-    volumes:
-      - ./monitor/data/grafana:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=myadmin
-      - GF_USERS_ALLOW_SIGN_UP=false
-  alertmanager:
-    container_name: alertmanager
-    image: prom/alertmanager
-    ports:
-      - "9093:9093"
-    volumes:
-      - ./monitor/alertmanager/:/etc/alertmanager/
-    restart: always
-    command:
-      - "--config.file=/etc/alertmanager/config.yml"
-      - "--storage.path=/alertmanager"
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   ports:
+  #     - 9090:9090
+  #   command:
+  #     - --config.file=/etc/prometheus/prometheus.yml
+  #   volumes:
+  #     - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #   depends_on:
+  #     - cadvisor
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: node_exporter
+  #   restart: unless-stopped
+  #   expose:
+  #     - 9100
+  #   ports:
+  #     - 9100:9100
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.47.0
+  #   container_name: cadvisor
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /etc/machine-id:/etc/machine-id:ro
+  #   privileged: true
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   user: root
+  #   restart: unless-stopped
+  #   links:
+  #     - prometheus:prometheus
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./monitor/data/grafana:/var/lib/grafana
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=myadmin
+  #     - GF_USERS_ALLOW_SIGN_UP=false
+  # alertmanager:
+  #   container_name: alertmanager
+  #   image: prom/alertmanager
+  #   ports:
+  #     - "9093:9093"
+  #   volumes:
+  #     - ./monitor/alertmanager/:/etc/alertmanager/
+  #   restart: always
+  #   command:
+  #     - '--config.file=/etc/alertmanager/config.yml'
+  #     - '--storage.path=/alertmanager'
 
   elasticsearch:
     container_name: elasticsearch
@@ -211,12 +214,11 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-  frontend:
-    build:
-      context: ./frontend/hey-apple
-    volumes:
-      - ./frontend/hey-apple/:/frontend
-      - build_folder:/frontend/build
-      - ./frontend/node_modules/:/frontend/node_modules
-    tty: true
-
+  # frontend:
+  #   build:
+  #     context: ./frontend/hey-apple
+  #   volumes:
+  #     - ./frontend/hey-apple/:/frontend
+  #     - build_folder:/frontend/build
+  #     - ./frontend/node_modules/:/frontend/node_modules
+  #   tty: true
