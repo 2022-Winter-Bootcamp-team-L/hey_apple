@@ -9,5 +9,9 @@ webdriver-manager
 pymysql
 pyvirtualdisplay # 가상 화면 생성
 
-#scheduler
+# scheduler
 schedule 
+
+# elasticsearch
+# acryl-datahub[datahub-rest,elasticsearch]
+elasticsearch
