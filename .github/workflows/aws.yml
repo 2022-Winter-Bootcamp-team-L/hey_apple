@@ -52,8 +52,8 @@ jobs:
           cat .env
 
 
-    - name: Override alertmanagers/config.yml
-      working-directory: monitor/alertmanagers
+    - name: Override alertmanager/config.yml
+      working-directory: ./monitor/alertmanager
       run: |
           pwd
           echo "${{secrets.ALERTMANAGER_CONFIG}}" >> config.yml
