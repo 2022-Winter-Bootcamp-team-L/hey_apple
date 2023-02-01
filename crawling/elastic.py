@@ -1,7 +1,5 @@
 import pprint
 import time
-
-from django.http import JsonResponse
 from pymongo import MongoClient
 import os
 from elasticsearch import Elasticsearch, helpers
@@ -9,12 +7,9 @@ from elasticsearch.exceptions import ConnectionError, RequestError
 import pandas as pd
 import json
 from pathlib import Path
-from elasticsearch_dsl import Search, connections
-from rest_framework.decorators import api_view
 
 
 # Get mongoDB data
-
 class My_MongoDB():
     def __init__(self):
         self.client = MongoClient(
@@ -25,7 +20,6 @@ class My_MongoDB():
 
     def __del__(self):
         self.client.close()
-
 
 # Create Elasticsearch index & import
 
@@ -46,10 +40,7 @@ class My_Elasticsearch():
         return self.es.search(index=_index, body=body)
 
     def Insert(self, _index, _data):
-        # BASE_DIR = Path(__file__).resolve().parent
-        # print(BASE_DIR)
-        # mapping_path = os.path.join(BASE_DIR, 'mapping.json')
-        with open('/backend/hey_apple_app/mapping.json', 'r') as f:
+        with open('/crawling/mapping.json', 'r') as f:
             mapping = json.load(f)
         try:
             time.sleep(2)
@@ -69,10 +60,8 @@ def es_import():
     del (mongo_data['_id'])
     data = mongo_data.to_dict('records')
     elastic = My_Elasticsearch()
-    print("#######################################################")
-    print("heyapple", data)
     elastic.Insert("heyapple", data)
-    print("insert 확인")
+    print("Inserted")
     data = {"name": "Apple"}
     pprint.pprint(elastic.Search("heyapple", data))
 
@@ -87,7 +76,7 @@ def elastic_check():
         try:
             elastic.es.info()
             connected = True
-            print("connected!!!!!!!!!!!!!!!!!!!!")
+            print("elasticsearch connected")
             return 1
         except ConnectionError:
             print("Elasticsearch not available yet, trying again in 2s...")
@@ -95,19 +84,7 @@ def elastic_check():
             return 0
 
 
-elastic_check()
-time.sleep(2)
-es_import()
-
-
-@api_view(['GET'])
-def elastic_search_get_by_name(request):
-    try:
-        conn = connections.create_connection(timeout=20)
-        s = Search().using(conn)
-        return_result = []
-        for hit in s:
-            return_result.append(hit.key)
-    except ConnectionError:
-        return JsonResponse({'result': "fail"}, status=400)
-    return JsonResponse({'result': return_result}, status=200)
+if __name__ == "__main__":
+    elastic_check()
+    time.sleep(2)
+    es_import()

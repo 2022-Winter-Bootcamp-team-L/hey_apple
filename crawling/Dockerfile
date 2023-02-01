@@ -10,12 +10,13 @@ RUN apt-get update
 RUN apt-get install python3 -y
 RUN apt install python3-pip -y
 RUN apt-get install xvfb -y
+RUN python3 -m pip install --upgrade pip setuptools wheel
 
 WORKDIR /crawling
-COPY requirements.txt fruits_crawling.py pymongo_tut.py Dockerfile ./
+COPY . .
 RUN pip install --upgrade pip
 RUN pip3 install -r requirements.txt
-COPY . .
+
 
 
 # https://stackoverflow.com/questions/69784773/headless-chrome-on-docker-m1-error-unable-to-discover-open-window-in-chrome

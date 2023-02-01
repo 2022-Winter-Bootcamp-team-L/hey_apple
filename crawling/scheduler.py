@@ -3,32 +3,31 @@ import time
 import datetime
 import fruits_crawling
 import pymongo_tut
+import elastic
+
 
 def crawlingFuc():
     time_stamp()
-    print("Scheduler :: crawling Start")
-    crawling_result = 0
-    crawling_result =fruits_crawling.crawlingStart() # fruits_crawling start
-    print(crawling_result)
-    if crawling_result == 1 : #1 is sucess
-        pymongo_tut.mongoa() #start mongo_save
-    else :
+    print("Scheduler :: Start")
+    crawling_result, elastic_result = 0, 0
+    crawling_result = fruits_crawling.crawlingStart()  # fruits_crawling start
+    elastic_result = elastic.elastic_check()  # 1 success , 0 false
+    if crawling_result == 1 and elastic_result == 1:  # 1 is sucess
+        pymongo_tut.mongoa()  # start mongo_save
+    else:
         print("크롤링 스케줄러..실패...")
-        
+
 
 def time_stamp():
-    #now = time.localtime()
     this_time = time.strftime('%Y.%m.%d - %H:%M:%S')
-    print("this_time : " , str(this_time))
-    
+    print("this_time : ", str(this_time))
+
+
 def scheduler():
     print("최초실행 시작 ....")
     crawlingFuc()
-    
-    print ("스케줄러가 시작합니다")
-    #schedule.every(5).seconds.do(time_stamp)
-    #schedule.every(300).seconds.do(crawlingFuc)
-    schedule.every().hour.do(time_stamp)# 한시간에 한번씩
+    print("스케줄러가 시작됩니다")
+    schedule.every().hour.do(time_stamp)  # 한시간에 한번씩
     schedule.every().day.at("02:00").do(crawlingFuc)
 
 

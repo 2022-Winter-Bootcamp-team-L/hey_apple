@@ -152,13 +152,14 @@ def mail_task(request):
             total_price = res['total_price']
             content_img_price = ""
             content_fruit = ""
-            result_img = image.objects.filter(orderpayment_id = orderpaymentid).filter(is_deleted = 0).values('id' , "image_price")
+            result_img = image.objects.filter(orderpayment_id = orderpaymentid).filter(is_deleted = 0).values('id' ,'s3_result_image_url' ,"image_price")
             flag =0
             for i in result_img :
                 res = result_img[flag]
                 img_id = res['id']
+                img_result = res['s3_result_image_url']
                 img_price = res['image_price']
-                content_img_price += str(img_id) +","+str(img_price)+"\n"
+                content_img_price += "아이디: "+str(img_id)+"\n" +str(img_result) +"  가격:"+str(img_price)+"\n"
 
                 result_fruitorder = fruitorder.objects.filter(image_id = img_id).filter(is_deleted = 0).values('fruit_id',"count")
                 flag2 =0
@@ -171,7 +172,7 @@ def mail_task(request):
                     fruit_name =  fruit_info['name']
                     fruit_price = fruit_info['price']
                     fruit_count = res['count']
-                    content_fruit += str(fruit_name)+","+str(fruit_price)+","+str(fruit_count)+"\n"  
+                    content_fruit += str(fruit_name)+" : "+str(fruit_count)+"개 "+str(fruit_price)+"원 (개당가격)"+"\n"  
                     flag2 +=1 
                 flag +=1
 
@@ -193,8 +194,8 @@ def mail_task(request):
                 content = subject+"님 hey, Apple 이용에 감사드립니다.\n"
                 content +="이미지별 각 가격입니다. \n" + content_img_price +"\n\n"
                 content +="과일정보입니다. \n" + content_fruit+"\n\n"
-                content += "총가격 입니다."+str(total_price)+"\n\n"
-                content +="http://3.39.167.173:3001"
+                content += "총가격 입니다.\n"+str(total_price)+"원\n\n"
+                content +="http://svheyapple.com/"
             except:
                 emailcheckFlag = 4
                 return emailcheckFlag
