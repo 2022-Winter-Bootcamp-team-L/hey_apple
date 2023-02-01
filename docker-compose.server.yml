@@ -70,7 +70,10 @@ services:
     user: root
 
     command: >
-      sh -c "python3 scheduler.py"
+      sh -c "
+            python3 elastic.py &&
+            python3 scheduler.py
+            "
     # command: >
     #   sh -c "python3 pymongo_tut.py"
 
@@ -80,6 +83,9 @@ services:
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     tty: true
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
 
   nginx:
     container_name: nginx
@@ -211,6 +217,7 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+        
   frontend:
     build:
       context: ./frontend/hey-apple
