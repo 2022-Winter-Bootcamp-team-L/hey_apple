@@ -19,7 +19,7 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     volumes:
-      - ./backend/mysql-db:/var/lib/mysql #이거?
+      - ./mysql-db:/var/lib/mysql #이거?
 
   backend:
     container_name: backend
@@ -35,8 +35,6 @@ services:
       sh -c "python wait_for_mysql.py &&
               python manage.py makemigrations hey_apple_app &&
               python manage.py migrate hey_apple_app &&
-              python hey_apple_app/elastic.py &&
-              python hey_apple_app/scheduler.py &&
               gunicorn backend.wsgi:application --bind 0.0.0.0:8000"
     # 나중에 배포 시 /etc/systemd/system/gunicorn.service 파일 생성
     ports:
@@ -94,7 +92,7 @@ services:
       - build_folder:/var/www/frontend
     depends_on:
       - backend
-      - frontend
+      # - frontend
 
   celery_worker:
     container_name: celery_worker
@@ -152,6 +150,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /etc/machine-id:/etc/machine-id:ro
     privileged: true
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -213,12 +212,13 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-  frontend:
-    build:
-      context: ./frontend/hey-apple
-    image: ${DOCKER_REGISTRY}/frontend:latest
-    volumes:
-      - ./frontend/hey-apple/:/frontend
-      - build_folder:/frontend/build
-      - ./frontend/node_modules/:/frontend/node_modules
-    tty: true
+
+  # frontend:
+  #   build:
+  #     context: ./frontend/hey-apple
+  #   image: ${DOCKER_REGISTRY}/frontend:latest
+  #   volumes:
+  #     - ./frontend/hey-apple/:/frontend
+  #     - build_folder:/frontend/build
+  #     - ./frontend/node_modules/:/frontend/node_modules
+  #   tty: true

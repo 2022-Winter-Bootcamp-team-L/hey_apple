@@ -2,6 +2,8 @@ name: Dockerizing to Amazon ECR
 
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - develop
 
@@ -11,6 +13,9 @@ env:
 
 
 jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-20.04
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -31,9 +36,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Clone github repository hey_apple
-      run: git clone https://github.com/2022-Winter-Bootcamp-team-L/hey_apple.git
-
     - name: Create secrets.json file
       working-directory: ./backend
       run: |
@@ -42,13 +44,29 @@ jobs:
           echo "${{secrets.SECRETS_JSON}}" >> secrets.json
           cat secrets.json
 
+    - name: Create .env file for docker-compose.prod.yml
+      working-directory: ./
+      run: |
+          pwd
+          touch .env
+          echo "${{secrets.DOCKER_ENV}}" >> .env
+          cat .env
+
+
+    - name: Override alertmanager/config.yml
+      working-directory: ./monitor/alertmanager
+      run: |
+          pwd
+          echo "${{secrets.ALERTMANAGER_CONFIG}}" >> config.yml
+          cat config.yml
+
     - name: Build docker images
       run: |
-          docker-compose build
+          docker-compose -f docker-compose.prod.yml build
           docker images
 
     - name: Push images to Amazon ECR repositorys
-      run: docker-compose push
+      run: docker-compose -f docker-compose.prod.yml push
 
 
 
