@@ -51,6 +51,14 @@ jobs:
           echo "${{secrets.DOCKER_ENV}}" >> .env
           cat .env
 
+
+    - name: Override alertmanagers/config.yml
+      working-directory: ./monitor/alertmanagers
+      run: |
+          pwd
+          echo "${{secrets.ALERTMANAGER_CONFIG}}" >> config.yml
+          cat config.yml
+
     - name: Build docker images
       run: |
           docker-compose -f docker-compose.prod.yml build
