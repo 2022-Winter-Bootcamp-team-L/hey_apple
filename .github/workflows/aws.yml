@@ -2,12 +2,10 @@ name: Dockerizing to Amazon ECR
 
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - develop
-
-  push:
-    branches:
-      - feature#110
 
 env:
   AWS_REGION: ap-northeast-2
@@ -15,6 +13,9 @@ env:
 
 
 jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-20.04
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
