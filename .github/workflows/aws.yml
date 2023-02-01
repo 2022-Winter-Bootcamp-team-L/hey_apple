@@ -53,7 +53,7 @@ jobs:
 
 
     - name: Override alertmanagers/config.yml
-      working-directory: ./monitor/alertmanagers
+      working-directory: monitor/alertmanagers
       run: |
           pwd
           echo "${{secrets.ALERTMANAGER_CONFIG}}" >> config.yml
