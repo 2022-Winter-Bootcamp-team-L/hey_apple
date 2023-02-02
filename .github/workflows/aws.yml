@@ -4,66 +4,56 @@ on:
   pull_request:
     types:
       - closed
-    branches:
-      - develop
 
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: heyapple
 
-
 jobs:
-  if_merged:
+  build_push:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-20.04
-  deploy:
-    name: Deploy
+    name: build_push
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Create secrets.json file
-      working-directory: ./backend
-      run: |
+      - name: Create secrets.json file
+        working-directory: ./backend
+        run: |
           pwd
           touch secrets.json
           echo "${{secrets.SECRETS_JSON}}" >> secrets.json
           cat secrets.json
-
-    - name: Create .env file for docker-compose.prod.yml
-      working-directory: ./
-      run: |
+      - name: Create .env file for docker-compose.prod.yml
+        working-directory: ./
+        run: |
           pwd
           touch .env
           echo "${{secrets.DOCKER_ENV}}" >> .env
           cat .env
-
-
-    - name: Override alertmanager/config.yml
-      working-directory: ./monitor/alertmanager
-      run: |
+      - name: Override alertmanager/config.yml
+        working-directory: ./monitor/alertmanager
+        run: |
           pwd
           echo "${{secrets.ALERTMANAGER_CONFIG}}" >> config.yml
           cat config.yml
-
-    - name: Build docker images
-      run: |
+      - name: Build docker images
+        run: |
           docker-compose -f docker-compose.prod.yml build
           docker images
-
-    - name: Push images to Amazon ECR repositorys
-      run: docker-compose -f docker-compose.prod.yml push
+      - name: Push images to Amazon ECR repositorys
+        run: docker-compose -f docker-compose.prod.yml push
