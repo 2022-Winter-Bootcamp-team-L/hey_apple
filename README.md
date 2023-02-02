@@ -42,7 +42,7 @@
 
 ---
 <br/><br/><br/><br/>
-## **| Monitoring & Stress Test |**
+## **| Monitoring & Load Test |**
 - ### 과일 조회 API
 <img src="https://user-images.githubusercontent.com/103374034/216249988-8f72d9d9-e1c6-4600-9584-944d0893da6b.png" width="100%" height="100%"/>
 <img src="https://user-images.githubusercontent.com/103374034/216249742-636d8d26-2231-4917-a608-418d385f0a66.png" width="100%" height="100%"/>
