@@ -37,11 +37,11 @@
 <img src="https://user-images.githubusercontent.com/103374034/216250216-a58705d4-dea1-4dee-8767-6e31e90cb381.png" width="100%" height="100%"/>
 
 ---
-<br/><br/><br/><br/>
+<br/><br/>
 ## **| Installation |**
 
 ---
-<br/><br/><br/><br/>
+<br/><br/>
 ## **| Monitoring & Load Test |**
 - ### 과일 조회 API
 <img src="https://user-images.githubusercontent.com/103374034/216249988-8f72d9d9-e1c6-4600-9584-944d0893da6b.png" width="100%" height="100%"/>
