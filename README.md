@@ -29,7 +29,7 @@
 
 ## **| ERD |**
 
-<img src="https://user-images.githubusercontent.com/103374034/216215959-ab794607-20ec-42e2-9d71-2ab0851fd6e7.png" width="100%" height="100%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216215959-ab794607-20ec-42e2-9d71-2ab0851fd6e7.png" width="100%" height="200%"/>
 
 ## **| API |**
 
