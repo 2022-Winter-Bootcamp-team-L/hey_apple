@@ -11,6 +11,7 @@
 <img src="https://user-images.githubusercontent.com/103374034/216216219-ddc83cec-5925-4e43-8fb0-48ed266e8bbe.png" width="100%" height="70%"/>
 
 ---
+<br/><br/>
 
 ## **| Tech Stack |**
 |Dev-Ops|                                                                                                                                                                                                                                                                                                             <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=black"> <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white"> <img src="https://img.shields.io/badge/S3%20Bucket-569A31?style=for-the-badge&logo=Amazon%20S3&logoColor=white"> <img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=black"> <img src="https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=Gunicorn&logoColor=black">                                                                                                                                                                                                                                                                                                             |
@@ -21,7 +22,9 @@
 |__AI__|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=PyTorch&logoColor=black"> <img src="https://img.shields.io/badge/YOLOv5-00FFFF?style=for-the-badge&logo=YOLO&logoColor=black">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 |__Monitoring__|                                                                                                                                                                                                                                                                                                                                                                                                                        <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=black"> <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=Grafana&logoColor=black"> <img src="https://img.shields.io/badge/cAdvisor-2496ED?style=for-the-badge&logo=cAdvisor&logoColor=white">                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |__Others__|                                                                                                                                                                                                                                                                                                                         <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=black"> <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=black"> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"> <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=black">  <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=black">                                                                                                                                                                                                                                                                                                                          |
+
 ---
+<br/><br/>
 ## **| Features |**
 
 ### 1. Main Features
@@ -30,16 +33,16 @@
 ### 4. Responsive Pages
 
 ---
-
+<br/><br/>
 ## **| AI |**
 <img src="https://user-images.githubusercontent.com/103374034/216250216-a58705d4-dea1-4dee-8767-6e31e90cb381.png" width="100%" height="100%"/>
 
 ---
-
+<br/><br/><br/><br/>
 ## **| Installation |**
 
 ---
-
+<br/><br/><br/><br/>
 ## **| Monitoring & Stress Test |**
 - ### 과일 조회 API
 <img src="https://user-images.githubusercontent.com/103374034/216249988-8f72d9d9-e1c6-4600-9584-944d0893da6b.png" width="100%" height="100%"/>
@@ -50,17 +53,17 @@
 <img src="https://user-images.githubusercontent.com/103374034/216251317-fef55a23-0a67-4dcd-93e1-5b238d5f9b5a.png" width="100%" height="100%"/>
 
 ---
-
+<br/><br/>
 ## **| ERD |**
 
 <img src="https://user-images.githubusercontent.com/103374034/216215959-ab794607-20ec-42e2-9d71-2ab0851fd6e7.png" width="100%" height="200%"/>
----
 
+---
+<br/><br/>
 ## **| API |**
 ### 1. 이미지 업로드 및 분석 → 이미지 분석 결과 확인
 <img src="https://user-images.githubusercontent.com/103374034/216262207-953b6fc8-2199-4e14-860a-c8a42d40b6c1.png" width="100%" height="100%"/>
 <img src="https://user-images.githubusercontent.com/103374034/216262219-91d16ce1-30b6-4182-adea-bb6c8607cb28.png" width="100%" height="100%"/>
-<img src="https://user-images.githubusercontent.com/103374034/216262207-953b6fc8-2199-4e14-860a-c8a42d40b6c1.png" width="100%" height="100%"/>  
 
 ### 2. 주문 영수증 이메일 전송  
 <img src="https://user-images.githubusercontent.com/103374034/216262487-29424757-876c-4da6-88c3-493c4148b3d7.png" width="100%" height="100%"/>
@@ -69,6 +72,7 @@
 <img src="https://user-images.githubusercontent.com/103374034/216262682-4e44d09b-7f87-4a96-afbd-efdf68921493.png" width="100%" height="100%"/>
 
 ---
+<br/><br/>
 ## **| Members |**
 | 이름  |개발분야|개인 Github|
 |-----|---|--------------------------------|
