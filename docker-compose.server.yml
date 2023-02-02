@@ -167,7 +167,7 @@ services:
       - prometheus:prometheus
     ports:
       - 3000:3000
-      volumes:
+    volumes:
       - ./monitor/data/grafana:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning
     environment:

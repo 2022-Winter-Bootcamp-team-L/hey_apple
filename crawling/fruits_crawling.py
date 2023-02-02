@@ -69,9 +69,7 @@ def crawlingStart():
                 arr = info.text.split('\n')
                 for text in arr:
                     if i%3 == 0:
-                        today = text.split('(')[0]
-                        print(today)
-                        date_text = today.strftime('%m-%d')
+                        date_text = text.split('(')[0]
                         date_key = "date"+str(id)
                         price_key = "price"+str(id)
                         id = id+1
