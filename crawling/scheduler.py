@@ -10,10 +10,11 @@ def crawlingFuc():
     time_stamp()
     print("Scheduler :: Start")
     crawling_result, elastic_result = 0, 0
-    crawling_result = fruits_crawling.crawlingStart()  # fruits_crawling start
     elastic_result = elastic.elastic_check()  # 1 success , 0 false
+    crawling_result = fruits_crawling.crawlingStart()  # fruits_crawling start
     if crawling_result == 1 and elastic_result == 1:  # 1 is sucess
         pymongo_tut.mongoa()  # start mongo_save
+        elastic.es_import()
     else:
         print("크롤링 스케줄러..실패...")
 
@@ -27,8 +28,9 @@ def scheduler():
     print("최초실행 시작 ....")
     crawlingFuc()
     print("스케줄러가 시작됩니다")
-    schedule.every().hour.do(time_stamp)  # 한시간에 한번씩
-    schedule.every().day.at("02:00").do(crawlingFuc)
+    schedule.every(5).seconds.do(time_stamp)
+    # schedule.every().hour.do(time_stamp)  # 한시간에 한번씩
+    schedule.every().day.at("02:30").do(crawlingFuc)
 
 
 scheduler()
