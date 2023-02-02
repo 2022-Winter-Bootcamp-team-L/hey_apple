@@ -29,16 +29,25 @@
 ### 3. Price Statistics
 ### 4. Responsive Pages
 
+---
+
 ## **| AI |**
 <img src="https://user-images.githubusercontent.com/103374034/216250216-a58705d4-dea1-4dee-8767-6e31e90cb381.png" width="100%" height="100%"/>
 
+---
+
 ## **| Installation |**
+
+---
+
 ## **| Monitoring & Stress Test |**
 - ### 과일 조회 API
 <img src="https://user-images.githubusercontent.com/103374034/216249988-8f72d9d9-e1c6-4600-9584-944d0893da6b.png" width="100%" height="100%"/>
 <img src="https://user-images.githubusercontent.com/103374034/216249742-636d8d26-2231-4917-a608-418d385f0a66.png" width="100%" height="100%"/>
 
 - ### 이메일 API
+<img src="https://user-images.githubusercontent.com/103374034/216251324-00b0fab9-152f-4ad0-8730-e850bec7946a.png" width="100%" height="100%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216251317-fef55a23-0a67-4dcd-93e1-5b238d5f9b5a.png" width="100%" height="100%"/>
 
 ---
 
@@ -48,6 +57,16 @@
 ---
 
 ## **| API |**
+### 1. 이미지 업로드 및 분석 → 이미지 분석 결과 확인
+<img src="https://user-images.githubusercontent.com/103374034/216262207-953b6fc8-2199-4e14-860a-c8a42d40b6c1.png" width="100%" height="100%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216262219-91d16ce1-30b6-4182-adea-bb6c8607cb28.png" width="100%" height="100%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216262207-953b6fc8-2199-4e14-860a-c8a42d40b6c1.png" width="100%" height="100%"/>  
+
+### 2. 주문 영수증 이메일 전송  
+<img src="https://user-images.githubusercontent.com/103374034/216262487-29424757-876c-4da6-88c3-493c4148b3d7.png" width="100%" height="100%"/>
+
+### 3. 과일 정보 조회
+<img src="https://user-images.githubusercontent.com/103374034/216262682-4e44d09b-7f87-4a96-afbd-efdf68921493.png" width="100%" height="100%"/>
 
 ---
 ## **| Members |**
