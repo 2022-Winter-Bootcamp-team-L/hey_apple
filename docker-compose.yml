@@ -42,11 +42,7 @@ services:
       - ./backend/:/backend/
     expose:
       - 8000
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    environment:
-      - TZ=Asia/Seoul
+      
   redis:
     image: redis:latest
     command: redis-server --port 6379
