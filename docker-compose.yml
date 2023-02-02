@@ -121,6 +121,8 @@ services:
       - 9090:9090
     command:
       - --config.file=/etc/prometheus/prometheus.yml
+    links:
+      - alertmanager:alertmanager
     volumes:
       - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
@@ -156,6 +158,7 @@ services:
       - 3000:3000
     volumes:
       - ./monitor/data/grafana:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
