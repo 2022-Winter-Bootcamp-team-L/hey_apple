@@ -70,7 +70,10 @@ services:
     user: root
 
     command: >
-      sh -c "python3 scheduler.py"
+      sh -c "
+            python3 elastic.py &&
+            python3 scheduler.py
+            "
     # command: >
     #   sh -c "python3 pymongo_tut.py"
 
@@ -80,6 +83,9 @@ services:
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     tty: true
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
 
   nginx:
     container_name: nginx
@@ -126,6 +132,8 @@ services:
       - 9090:9090
     command:
       - --config.file=/etc/prometheus/prometheus.yml
+    links:
+      - alertmanager:alertmanager
     volumes:
       - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
@@ -159,8 +167,9 @@ services:
       - prometheus:prometheus
     ports:
       - 3000:3000
-    volumes:
+      volumes:
       - ./monitor/data/grafana:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=myadmin
       - GF_USERS_ALLOW_SIGN_UP=false
@@ -211,6 +220,7 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
+        
   frontend:
     build:
       context: ./frontend/hey-apple

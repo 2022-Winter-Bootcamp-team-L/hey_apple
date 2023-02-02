@@ -55,5 +55,6 @@ jobs:
         run: |
           docker-compose -f docker-compose.prod.yml build
           docker images
+
       - name: Push images to Amazon ECR repositorys
         run: docker-compose -f docker-compose.prod.yml push
