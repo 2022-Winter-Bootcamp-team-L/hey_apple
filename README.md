@@ -26,6 +26,14 @@
 ### 3. Price Statistics
 ### 4. Responsive Pages
 
+## **| AI |**
+<img src="https://user-images.githubusercontent.com/103374034/216250216-a58705d4-dea1-4dee-8767-6e31e90cb381.png" width="100%" height="100%"/>
+
+## **| Installation |**
+## **| Monitoring & Stress Test |**
+<img src="https://user-images.githubusercontent.com/103374034/216249988-8f72d9d9-e1c6-4600-9584-944d0893da6b.png" width="100%" height="100%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216249742-636d8d26-2231-4917-a608-418d385f0a66.png" width="100%" height="100%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216249742-636d8d26-2231-4917-a608-418d385f0a66.png" width="100%" height="100%"/>
 
 ## **| ERD |**
 
@@ -36,10 +44,10 @@
 ## **| Members |**
 | 이름  |개발분야|개인 Github|
 |-----|---|--------------------------------|
-| 송지민 |Back-end,DevOps| https://github.com/jiminsong490 
-| 양세진 |Back-end,DevOps| https://github.com/Sejin-999   
-| 박상민 |Back-end,DevOps,AI| https://github.com/smart-sangmin 
-| 박성빈 |Back-end,DevOps| https://github.com/SeongbinPark 
-| 이주영 |Front-end| https://github.com/phnml1      
-| 김주희 |Front-end| https://github.com/edi54       
-| 박소희 |Front-end| https://github.com/sooohi      
+| 송지민 |Back-end,DevOps| https://github.com/jiminsong490 |
+| 양세진 |Back-end,DevOps| https://github.com/Sejin-999   |
+| 박상민 |Back-end,DevOps,AI| https://github.com/smart-sangmin |
+| 박성빈 |Back-end,DevOps| https://github.com/SeongbinPark |
+| 이주영 |Front-end| https://github.com/phnml1      |
+| 김주희 |Front-end| https://github.com/edi54       |
+| 박소희 |Front-end| https://github.com/sooohi      |
