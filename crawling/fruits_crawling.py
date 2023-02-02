@@ -42,7 +42,7 @@ def crawlingStart():
             fruit_name = driver.find_element(By.XPATH, # 과일 이름 가져오기
                 r'//*[@id="gdid_selectPummokName"]').text
             print(fruit_name)
-            if fruit == '망고' or fruit == '아보카도' or fruit == '배' : # 평균 가격 가져오기
+            if fruit == '망고' or fruit == '아보카도': # 평균 가격 가져오기
                 price_avg = driver.find_element(By.XPATH, # 망고, 아보카도만 예외
                     r'//*[@id="gcid_itemList"]/div/div/div/ul/li[1]/a/div/div/div/p/span/b').text
             else :    
@@ -69,7 +69,8 @@ def crawlingStart():
                 arr = info.text.split('\n')
                 for text in arr:
                     if i%3 == 0:
-                        today = date.today() - timedelta(id-1)
+                        today = text.split('(')[0]
+                        print(today)
                         date_text = today.strftime('%m-%d')
                         date_key = "date"+str(id)
                         price_key = "price"+str(id)
