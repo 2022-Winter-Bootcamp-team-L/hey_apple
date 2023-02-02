@@ -1,6 +1,10 @@
 route:
     receiver: 'slack'
-
+    group_by: ['alertname', 'cluster']
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 3h
+    
 receivers:
     - name: 'slack'
       slack_configs:
@@ -8,4 +12,6 @@ receivers:
             text: "{{ .CommonAnnotations.description }}"
             username: '1106q'
             channel: '#test'
-            api_url:
+            api_url: 
+            
+    
