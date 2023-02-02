@@ -7,7 +7,7 @@
 ## **| System Architecture |**
 
 
-<img src="https://user-images.githubusercontent.com/103374034/216216219-ddc83cec-5925-4e43-8fb0-48ed266e8bbe.png" width="70%" height="70%"/>
+<img src="https://user-images.githubusercontent.com/103374034/216216219-ddc83cec-5925-4e43-8fb0-48ed266e8bbe.png" width="100%" height="70%"/>
 
 ## **| Tech Stack |**
 |Dev-Ops|                                                                                                                                                                                                                                                                                                             <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=black"> <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white"> <img src="https://img.shields.io/badge/S3%20Bucket-569A31?style=for-the-badge&logo=Amazon%20S3&logoColor=white"> <img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=black"> <img src="https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=Gunicorn&logoColor=black">                                                                                                                                                                                                                                                                                                             |
