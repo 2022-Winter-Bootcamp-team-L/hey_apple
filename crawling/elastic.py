@@ -42,16 +42,14 @@ class My_Elasticsearch():
     def Insert(self, _index, _data):
         with open('/crawling/mapping.json', 'r') as f:
             mapping = json.load(f)
-        try:
-            time.sleep(2)
-            self.es.indices.create(index=_index, body=mapping)
-            time.sleep(2)
-            helpers.bulk(self.es, _data, index=_index)
-        except RequestError as ex:
-            if ex.error == 'resource_already_exists_exception':
-                pass  # Index already exists. Ignore.
-            else:  # Other exception - raise it
-                raise ex
+        # try:
+        time.sleep(2)
+        self.es.indices.delete(index=_index, ignore_unavailable=True)
+        time.sleep(2)
+        self.es.indices.create(index=_index, body=mapping)
+        time.sleep(2)
+        helpers.bulk(self.es, _data, index=_index)
+        print("task(Insert) All good")
 
 
 def es_import():
@@ -61,7 +59,6 @@ def es_import():
     data = mongo_data.to_dict('records')
     elastic = My_Elasticsearch()
     elastic.Insert("heyapple", data)
-    print("Inserted")
     data = {"name": "Apple"}
     pprint.pprint(elastic.Search("heyapple", data))
 
