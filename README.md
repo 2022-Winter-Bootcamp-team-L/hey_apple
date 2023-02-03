@@ -7,7 +7,7 @@
 
 ## **| System Architecture |**
 
-<img src="https://user-images.githubusercontent.com/103374034/216265773-c77a87be-4e63-40f5-bbd4-03cf3a453411.png" width="100%" height="70%"/>
+<img src="[https://user-images.githubusercontent.com/103374034/216265773-c77a87be-4e63-40f5-bbd4-03cf3a453411.png](https://user-images.githubusercontent.com/70051888/216712893-ce5bc38b-92d9-453b-88a1-44a7f643eeca.jpg)" width="100%" height="70%"/>
 
 ---
 <br/><br/>
