@@ -32,7 +32,8 @@ def scheduler():
     schedule.every().day.at("02:30").do(crawlingFuc)
 
 
-scheduler()
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if __name__ == "__name__":
+    scheduler()
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
