@@ -39,7 +39,9 @@
 ---
 <br/><br/>
 ## **| AI |**
-<img src="https://user-images.githubusercontent.com/103374034/216250216-a58705d4-dea1-4dee-8767-6e31e90cb381.png" width="100%" height="100%"/>
+![PR_curve](https://user-images.githubusercontent.com/70051888/216711125-461b7b39-57dd-4a89-b21e-b5702dab5bf3.png)
+![results](https://user-images.githubusercontent.com/70051888/216711112-a3888a1c-fc46-4f8a-8c46-a41ea26cdfbc.png)
+
 
 ---
 <br/><br/>
