@@ -32,7 +32,7 @@ def scheduler():
     schedule.every().day.at("02:30").do(crawlingFuc)
 
 
-if __name__ == "__name__":
+if __name__ == "__main__":
     scheduler()
     while True:
         schedule.run_pending()
