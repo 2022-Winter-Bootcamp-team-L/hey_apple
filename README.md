@@ -79,6 +79,11 @@
 
 ---
 <br/><br/>
+## **| Medium.com |**
+https://medium.com/@sangmins930/hey-apple-6d455220c5de(https://medium.com/@sangmins930/hey-apple-6d455220c5de)
+
+---
+<br/><br/>
 ## **| Members |**
 | 이름  |개발분야|개인 Github|
 |-----|---|--------------------------------|
