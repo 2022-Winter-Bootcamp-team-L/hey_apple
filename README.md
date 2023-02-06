@@ -80,7 +80,7 @@
 ---
 <br/><br/>
 ## **| Medium.com |**
-https://medium.com/@sangmins930/hey-apple-6d455220c5de(https://medium.com/@sangmins930/hey-apple-6d455220c5de)
+https://medium.com/@sangmins930/hey-apple-6d455220c5de
 
 ---
 <br/><br/>
